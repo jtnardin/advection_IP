@@ -37,7 +37,7 @@ for i = 1:6
     subplot(3,2,i)
     hold on
     
-    for j = 2:2:8
+    for j = 2:2:6
        
         plot(x,model_sims(:,i,j),'-')
     
@@ -46,7 +46,9 @@ for i = 1:6
     plot(x,soln(tdata(i),x),'--')
     
     if i == 1
-        legend('Numerical','True','location','northeast')
+        h=legend(['Numerical, dx = ' num2str(1/(xnsize(2)-1))],['Numerical, dx = ' num2str(1/(xnsize(4)-1))],...
+            ['Numerical, dx = ' num2str(1/(xnsize(6)-1))],'True Soln','location','northeast');
+        set(h,'interpreter','latex')
     end
     
 end

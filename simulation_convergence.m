@@ -6,7 +6,7 @@ clear all; clc
 alpha   = .3;
 beta    = 0.4;
 
-num_method = 'laxwend';
+num_method = 'beamwarm';
 
 q = [alpha,beta];
 
@@ -15,7 +15,7 @@ q = [alpha,beta];
 
 
 %initial condition
-phi = IC_spec('step');
+phi = IC_spec('gauss');
 
 
 
@@ -28,7 +28,7 @@ xfin = 1;
 
 
 %create grids for computation
-xnsize = [21,41,81,161,321,641,2*640+1,4*640+1];%,8*640+1];
+xnsize = [21,41,81,161,321,641,2*640+1];%,4*640+1];%,8*640+1];
 
 tdata = 0:2:tfin;
 xdata = linspace(0,xfin,xnsize(1));
@@ -38,12 +38,11 @@ lambda = 1/2;
 
 
 %matrix whose columns are simulations with increasing precision.
-model_sims = zeros(xnsize(1),6,length(xnsize));
+model_sims = zeros(length(xdata),6,length(xnsize));
 
 %vector whose entries are the true error between numerical sim and true
 %soln (E = ||u(h)-\hat{u}||_1)
 E = zeros(1,length(xnsize));
-E_grid = zeros(1,length(xnsize));
 
 tic
 
@@ -70,10 +69,10 @@ for i = 1:length(xnsize)
         IC = phi(x);
 
         %load matrices for computation
-        A = aMatrixupwind(xn,num_method);
+        [A,Abd] = aMatrixupwind(xn,num_method);
 
-        [umodel,E_grid(i)] = advection_computation(q,g,dx,xn,x_int,xbd_0,xbd_1,...
-            dt,tn,IC,A,x,xdata,2^(i-1),num_method,t,tdata,soln);
+        umodel = advection_computation(q,g,dx,xn,x_int,xbd_0,xbd_1,...
+            dt,tn,IC,A,Abd,x,xdata,num_method,t,tdata);
    
         
         model_sims(:,:,i) = umodel;
@@ -97,4 +96,3 @@ for i = 1:length(xnsize)
 end
 
 R = log2(E(1:end-1)./E(2:end))
-Rgrid = log2(E_grid(1:end-1)./E_grid(2:end))
