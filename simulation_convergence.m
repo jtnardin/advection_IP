@@ -15,7 +15,7 @@ q = [alpha,beta];
 
 
 %initial condition
-phi = IC_spec('gauss');
+phi = IC_spec('step');
 
 
 
