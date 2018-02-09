@@ -4,10 +4,12 @@
 q = cell(7,4,4);
 J = zeros(7,4,4);
 
+IC_str = '_front';
+
 tic
-for i = 1:5
+for i = 1:4
     for j = 1:4
-        for k = 1:4
+        for k = 1
             [i,j,k]
             
             if k == 1
@@ -21,15 +23,12 @@ for i = 1:5
             end
 
 
-            [q{i,j,k},J(i,j,k)] = art_advec_fitting_f(i,j,num_meth);
+            [q{i,j,k},J(i,j,k)] = art_advec_fitting_f(i,j,num_meth,IC_str);
 
-            count = 1;
-            %redo if bad result
-            while(J(i,j,k) > 1 && count <= 6)
-                [q{i,j,k},J(i,j,k)] = art_advec_fitting_f(i,j,num_meth);
-                count = count + 1;
-            end
+            
         end
     end
 end
 toc
+
+save(['advection_rates_IC' IC_str '.mat'],'J','q')

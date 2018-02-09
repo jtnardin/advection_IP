@@ -43,13 +43,17 @@ for i = 1:6
     
     end
     
-    plot(x,soln(tdata(i),x),'--')
+    udata = soln(tdata(i),x);
+    udata(isnan(udata))=phi(Xd(isnan(udata)));
+    plot(x,udata,'--')
     
     if i == 1
         h=legend(['Numerical, dx = ' num2str(1/(xnsize(2)-1))],['Numerical, dx = ' num2str(1/(xnsize(4)-1))],...
             ['Numerical, dx = ' num2str(1/(xnsize(6)-1))],'True Soln','location','northeast');
         set(h,'interpreter','latex')
     end
+    
+    title([num_method ', t = ' num2str(tdata(i))])
     
 end
 

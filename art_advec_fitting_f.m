@@ -1,15 +1,15 @@
 %art_advec_fitting_f.m written 2-2-18 by JTN to fit numerical model to
 %artifical data from u_t+(g(x)u)_x=0.
 
-function [q_f,J_f] =  art_advec_fitting_f(xni,m,num_meth)
+function [q_f,J_f] =  art_advec_fitting_f(xni,m,num_meth,IC_str)
 
-    simnum = 5;
+    simnum = 1;
 
     lambda = 1/2;
     
 
     %initial condition
-    phi = IC_spec('step');
+    phi = IC_spec(IC_str(2:end));
 
 
     %create grids for computaiton
@@ -17,7 +17,7 @@ function [q_f,J_f] =  art_advec_fitting_f(xni,m,num_meth)
 
 
     %load data
-    load('advection_art_data.mat')
+    load(['advection_art_data' IC_str '.mat'])
 
 
     xdi = ceil(m/2);
@@ -69,13 +69,15 @@ function [q_f,J_f] =  art_advec_fitting_f(xni,m,num_meth)
     for i = 1%:simnum
 
              %q = [chi,alpha,beta,D_v]^T;
-             q0_all{i} = [1 1] + .75*randn(1,2);
+             q0_all{i} = q0;
              LB = zeros(2,1);
              UB = inf(2,1);
 
-             while any(q0_all{i})<0
-                 q0_all{i} = [1 1] + .75*randn(1,2);
-             end
+%              while any(q0_all{i})<0
+%                  q0_all{i} = [1 1] + .75*randn(1,2);
+%              end
+
+            
 
 %             tic
             [q_all{i},J_all(i)] = fmincon(@(q) MLE_cost_art_data(cell_data,...

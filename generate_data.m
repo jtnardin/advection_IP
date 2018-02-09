@@ -7,24 +7,24 @@ td = linspace(0,10,6);
 
 data = cell(2,2);
 
-xndata = [10, 50];
+xndata = [11, 51];
 eta = [0 0.1];
 
 xd = cell(3,1);
 
 %params, terms to determine data
 alpha   = .3;
-beta    = 0.4;
+beta    = 0.5;
 
 q0 = [alpha,beta];
 
 %rate of advection
 [g,sigma,sigma_inv] = advection_rate('root',alpha,beta);
 %initial condition
-phi = IC_spec('step');
+phi = IC_spec('front');
 
 %final solution form.
-soln = @(t,x) (x>sigma_inv(t,0)).*g(sigma_inv(-t,x))./g(x).*phi(sigma_inv(-t,x));
+soln = @(t,x) (g(x)~=0).*(x>=sigma_inv(t,0)).*g(sigma_inv(-t,x))./g(x).*phi(sigma_inv(-t,x));
 
 
 
@@ -40,7 +40,7 @@ for i = 1:length(xndata)
         
         data_0 = soln(Td,Xd);
         
-        data_0(isnan(data_0))=0;
+        data_0(isnan(data_0))=phi(Xd(isnan(data_0)));
         
         data_1 = data_0+eta(j)*randn(size(data_0));
         
@@ -52,4 +52,4 @@ for i = 1:length(xndata)
 end
         
 
-save('advection_art_data.mat','data','q0','xd','td','eta')
+save('advection_art_data_front.mat','data','q0','xd','td','eta')

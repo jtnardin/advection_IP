@@ -11,13 +11,13 @@ function umodel = advection_computation(q,g,dx,xn,x_int,xbd_0,xbd_1,dt,...
     v = g(x);
 
     if strcmp(num_meth,'upwind')
-        Acomp = A(v(x_int),v(x_int-1),x_int,1,dt/dx);
+        Acomp = A(v(x_int),v(x_int-1),x_int,1,dt/dx) + Abd;
     elseif strcmp(num_meth,'laxfried')
-        Acomp = A(v(x_int+1),v(x_int-1),x_int,1,dt/dx);
+        Acomp = A(v(x_int+1),v(x_int-1),x_int,1,dt/dx) + Abd;
     elseif strcmp(num_meth,'laxwend')
-        Acomp = A(v(x_int+1),v(x_int-1),v(x_int),x_int,1,dt/dx);
+        Acomp = A(v(x_int+1),v(x_int-1),v(x_int),x_int,1,dt/dx) + Abd;
     elseif strcmp(num_meth,'beamwarm')
-        x_int_m = [x_int(2:end) xn];
+        x_int_m = [x_int(2:end)];
         Acomp = A(v(x_int_m),v(x_int_m-2),v(x_int_m-1),x_int_m,1,dt/dx) + ...
             Abd(v(2),v(1),2,1,dt/dx);
     else

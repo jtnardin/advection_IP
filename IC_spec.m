@@ -12,6 +12,11 @@ function phi = IC_spec(input)
     elseif strcmp(input,'gauss')
 
         phi = @(x) (exp(-(x-.2).^2/.005));
+  
+     elseif strcmp(input,'front')
+
+        phi = @(x) 5*(x<=.2);
+  
         
     elseif strcmp(input,'abs')
         

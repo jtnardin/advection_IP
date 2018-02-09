@@ -2,9 +2,14 @@
 %numerical simulation order convergence based on true-solution comparison
 
 clear all; clc
+
+IC_str = '_step';
+load(['advection_art_data' IC_str '.mat'])
+phi = IC_spec(IC_str(2:end));
+
 %generate true solution
-alpha   = .3;
-beta    = 0.4;
+alpha   = q0(1);
+beta    = q0(2);
 
 num_method = 'beamwarm';
 
@@ -12,10 +17,6 @@ q = [alpha,beta];
 
 %rate of advection
 [g,sigma,sigma_inv] = advection_rate('root',alpha,beta);
-
-
-%initial condition
-phi = IC_spec('step');
 
 
 
@@ -86,7 +87,7 @@ toc
 %now compute errors and ratios
 
 udata = soln(Td,Xd);
-udata(isnan(udata))=0;
+udata(isnan(udata))=phi(Xd(isnan(udata)));
 
 %estimate true order
 for i = 1:length(xnsize)
