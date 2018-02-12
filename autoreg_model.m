@@ -2,7 +2,8 @@
 m = 3;
 num_meth = 1;
 
-phihat = zeros(6,6);
+phihat1 = zeros(6,6);
+phihat2 = zeros(6,6);
 
 res_mod = cell(6,1);
 
@@ -12,21 +13,38 @@ for xni = 1:6
     res_mod{xni} = zeros(size(res{xni}));
     
     for tj = 2:6
-
+        
+        %get relevant residual values    
         a = res{xni}(tj,:);
 
-        [g,sigma,sigma_inv] = advection_rate('root',q{xni+1,m,num_meth}(1),...
-            q{xni+1,m,num_meth}(2));
+%         %find analytical location of discontinuity
+%         [g,sigma,sigma_inv] = advection_rate('root',q{xni+1,m,num_meth}(1),...
+%             q{xni+1,m,num_meth}(2));
+% 
+%         %find indices before/after discontinuity
+%         res_past_shock = a(xdata>sigma_inv(tdata(tj),.2));
+%         res_before_shock = a(xdata<sigma_inv(tdata(tj),.2));
+%         
+%         ind_past_shock = find(xdata>sigma_inv(tdata(tj),.2));
+%         ind_before_shock = find(xdata<=sigma_inv(tdata(tj),.2));
+        
+        a_max = max(abs(a));
+        a_max_loc = xdata(abs(a)==a_max);
 
-        x_past_shock = a(xdata>sigma_inv(tdata(tj),.3));
+        res_past_shock = a(xdata>=a_max_loc);
+        res_before_shock = a(xdata<a_max_loc);
+        
+        ind_past_shock = find(xdata>=a_max_loc);
+        ind_before_shock = find(xdata<a_max_loc);
 
-        ind = find(a==max(x_past_shock));
+        
+%         phihat(xni,tj) = sum(x_past_shock(1:end-1).*x_past_shock(2:end))/sum(a(past_ind:end).^2);
+        phihat1(xni,tj) = abs(phihat_estimate(res_past_shock));
+        phihat2(xni,tj) = abs(phihat_estimate(res_before_shock));
+        [B1,B2] = autoreg_mat(phihat1(xni,tj),phihat2(xni,tj),ind_past_shock,ind_before_shock,length(xdata));
+        
 
-        phihat(xni,tj) = sum(a(ind:end-1).*a(ind+1:end))/sum(a(ind:end).^2);
-        B = sparse([ind ind+1:50 ind+1:50],[ind ind+1:50 ind:49],[sqrt(1-phihat(xni,tj)^2)...
-            1*ones(1,50-ind) -phihat(xni,tj)*ones(1,50-ind)],50,50)/sqrt(1-phihat(xni,tj)^2);
-
-        res_mod{xni}(tj,:) = B*a';
+        res_mod{xni}(tj,:) = (B1+B2)*a';
 
     %     figure
     %     subplot(2,1,1)
@@ -41,3 +59,25 @@ for xni = 1:6
 
 end
 
+for i = 4
+
+    figure('units','normalized','outerposition',[0 0 1 1])
+    for j = 2:6
+        subplot(3,2,j)
+
+%         plot(res{i}(j,:),['b.'])
+        hold on
+        plot(res_mod{i}(j,:),[colors(j) '*'])
+        plot([1 length(xdata)],[0 0],'k')
+    end
+    
+        xlabel('x')
+        ylabel('A*(model - data)')
+        title(['Autoregessive Residual, t = ' num2str(tdata(j))])
+
+    
+end
+
+
+exportfig(gcf,['mod_residual_' IC_str '_' num2str(i) '_noise_' num2str(eta_str(m)) '.eps'],'fontsize',2,'color','rgb')
+saveas(gcf,['mod_residual_' IC_str '_' num2str(i) '_noise_' num2str(eta_str(m)) '.fig'])

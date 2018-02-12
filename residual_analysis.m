@@ -2,33 +2,22 @@ clear all; clc
 
 %%%%specify which initial condition, method,
 %%%%and data set we're compating
-IC_str = '_gauss';
+IC_str = '_front';
 num_meth = 1;
-m = 2;
+m = 3;
 
-%load data and best-fit rates
-if strcmp(IC_str,'_step')
-    
-    load('advection_rates_step_IC_2.mat')
-    load('advection_art_data.mat')
-    
-    phi = IC_spec('step');
-    
-elseif strcmp(IC_str,'_gauss')
 
-    load('advection_rates_gauss_IC.mat')
-    load('advection_art_data_gauss.mat')
-    
-    phi = IC_spec('gauss');
-    
-end
+%load best-fit params, data, and initial condition
+load(['advection_rates' IC_str '_IC.mat'])
+load(['advection_art_data' IC_str '.mat'])
+phi = IC_spec(IC_str(2:end));
+
 
 %grid sizes
 xnsize = [21,41,81,161,321,641,2*640+1];
 lambda = 1/2;
 
-xndata = [10, 50];
-eta = [0 0.05];
+xndata = [length(xd{1}), length(xd{2})];
 
 xnstr = zeros(1,4);
 eta_str = zeros(1,4);
@@ -128,20 +117,35 @@ colors = 'bgrkmc';
 % end
 
 
-i = 4;
-figure
-for j = 1:length(tdata)
-    subplot(3,2,j)
-    yyaxis left
-            hold on
-            plot(xdata,model_sims{i-1}(j,:),[colors(j) '-'])
-%             hold on
-%             plot(xdata,cell_data(j,:),[colors(j) '*'])
+for i = 4
+    figure('unit','normalized','outerposition',[0 0 1 1])
+    for j = 1:length(tdata)
+        subplot(3,2,j)
         
-        yyaxis right
-            hold on
-            plot(xdata,res{i-1}(j,:),[colors(j) '*'])
-       
+        yyaxis left
+                hold on
+                plot(xdata,model_sims{i-1}(j,:),[colors(j) '-'])
+    %             hold on
+    %             plot(xdata,cell_data(j,:),[colors(j) '*'])
+        ylabel('model')
+
+            yyaxis right
+                hold on
+                plot(xdata,res{i-1}(j,:),[colors(j) '*'])
+                plot([xdata(1) xdata(end)],zeros(1,2),'-')
+
+        xlabel('x')
+        ylabel('model - data')
+        title(['Residual, t = ' num2str(tdata(j))])
+
         
-    
+        if j == 1
+            legend('model','residuals')
+        end
+        
+        
+    end
 end
+
+exportfig(gcf,['residual_' IC_str '_' num2str(i) '_noise_' num2str(eta_str(m)) '.eps'],'fontsize',2,'color','rgb')
+saveas(gcf,['residual_' IC_str '_' num2str(i) '_noise_' num2str(eta_str(m)) '.fig'])
