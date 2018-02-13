@@ -59,7 +59,7 @@ for xni = 1:6
 
 end
 
-for i = 4
+for i = 5
 
     figure('units','normalized','outerposition',[0 0 1 1])
     for j = 2:6
@@ -67,14 +67,17 @@ for i = 4
 
 %         plot(res{i}(j,:),['b.'])
         hold on
-        plot(res_mod{i}(j,:),[colors(j) '*'])
-        plot([1 length(xdata)],[0 0],'k')
-    end
-    
+        plot(xdata,res_mod{i}(j,:),[colors(j) '*'])
+        plot([xdata(1) xdata(end)],[0 0],'k')
+        axis([0 1 -1 1])
+        
         xlabel('x')
         ylabel('A*(model - data)')
         title(['Autoregessive Residual, t = ' num2str(tdata(j))])
-
+    end
+    
+        
+        
     
 end
 

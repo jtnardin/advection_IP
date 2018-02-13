@@ -1,27 +1,13 @@
 clear all; clc
 
 
-IC_str = '_step';
+IC_str = '_front';
 
 
-%load data and best-fit rates
-if strcmp(IC_str,'_step')
-    
-    load('advection_rates_step_IC_2.mat')
-    load('advection_art_data.mat')
-    
-    phi = IC_spec('step');
-    
-elseif strcmp(IC_str,'_gauss')
-
-    load('advection_rates_gauss_IC.mat')
-    load('advection_art_data_gauss.mat')
-    
-    phi = IC_spec('gauss');
-    
-end
-
-
+%load best-fit params, data, and initial condition
+load(['advection_rates' IC_str '_IC.mat'])
+load(['advection_art_data' IC_str '.mat'])
+phi = IC_spec(IC_str(2:end));
 
 
 xnsize = [21,41,81,161,321,641,2*640+1];
@@ -71,21 +57,33 @@ end
 
 
 figure('units','normalized','outerposition',[0 0 1 1])
+
 for i = 1:4
     
     subplot(2,2,i)
-    loglog(1./xnsize,J(:,:,i))
+%     loglog(1./xnsize,J(:,:,i))
+    loglog(1./xnsize,squeeze(J(:,i,:)))
     
     if i == 1
         
-        h=legend(strcat('$N$ = ',num2str(xnstr'),', $\eta^2 = $',...
-            num2str(eta_str')),'location','northeast');
+%         h=legend(strcat('$N$ = ',num2str(xnstr'),', $\eta^2 = $',...
+%             num2str(eta_str')),'location','northeast');
+%         
+        h=legend('Upwind','Lax-Friedrichs','Lax-wendroff','beam warming',...
+            'location','northeast');
         
+
         set(h,'interpreter','latex');
         
     end
     
-    title(['J, ' num_meth_cell{i}])
+%     title(['J, ' num_meth_cell{i}])
+
+    
+
+
+    title(strcat('J, $N$ = ',num2str(xnstr(i)),', $\eta^2 = $',...
+            num2str(eta_str(i))),'interpreter','latex')
 
     xlabel('h')
     ylabel('$J(h,\hat{\theta})$','interpreter','latex')
@@ -116,24 +114,32 @@ figure('units','normalized','outerposition',[0 0 1 1])
 for i = 1:4
     
     subplot(2,2,i)
-    loglog(1./xnsize,q_norm(:,:,i))
+    loglog(1./xnsize,squeeze(q_norm(:,i,:)))
     
     if i == 1
         
-        h=legend(strcat('$N$ = ',num2str(xnstr'),', $\eta^2 = $',...
-            num2str(eta_str')),'location','northeast');
-        
+%         h=legend(strcat('$N$ = ',num2str(xnstr'),', $\eta^2 = $',...
+%             num2str(eta_str')),'location','northeast');
+
+          h=legend('Upwind','Lax-Friedrichs','Lax-wendroff','beam warming',...
+            'location','northeast');
+      
+
         set(h,'interpreter','latex');
         
     end
     
     axis([10^-4 10^-1 10^-5 10^1])
     
-    title(['$\| \hat{\theta} - \theta_0 \|_2$, ' num_meth_cell{i}],'interpreter','latex')
+%     title(['$\| \hat{\theta} - \theta_0 \|_2$, ' num_meth_cell{i}],'interpreter','latex')
     
+
+
+    title(strcat('$\| \theta_0 - \hat{\theta} \|_2, N$ = ',num2str(xnstr(i)),', $\eta^2 = $',...
+            num2str(eta_str(i))),'interpreter','latex')
     
     xlabel('h')
-    ylabel('$J(h,\hat{\theta})$','interpreter','latex')
+    ylabel('$\|\cdot\|_2$','interpreter','latex')
 
     
 end

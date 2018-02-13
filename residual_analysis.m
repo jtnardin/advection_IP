@@ -117,7 +117,7 @@ colors = 'bgrkmc';
 % end
 
 
-for i = 4
+for i = 5
     figure('unit','normalized','outerposition',[0 0 1 1])
     for j = 1:length(tdata)
         subplot(3,2,j)
@@ -128,12 +128,13 @@ for i = 4
     %             hold on
     %             plot(xdata,cell_data(j,:),[colors(j) '*'])
         ylabel('model')
-
-            yyaxis right
+        
+        yyaxis right
                 hold on
                 plot(xdata,res{i-1}(j,:),[colors(j) '*'])
                 plot([xdata(1) xdata(end)],zeros(1,2),'-')
-
+                axis([0 1 -1 1])
+                
         xlabel('x')
         ylabel('model - data')
         title(['Residual, t = ' num2str(tdata(j))])
@@ -147,5 +148,5 @@ for i = 4
     end
 end
 
-exportfig(gcf,['residual_' IC_str '_' num2str(i) '_noise_' num2str(eta_str(m)) '.eps'],'fontsize',2,'color','rgb')
-saveas(gcf,['residual_' IC_str '_' num2str(i) '_noise_' num2str(eta_str(m)) '.fig'])
+% exportfig(gcf,['residual_' IC_str '_' num2str(i) '_noise_' num2str(eta_str(m)) '.eps'],'fontsize',2,'color','rgb')
+% saveas(gcf,['residual_' IC_str '_' num2str(i) '_noise_' num2str(eta_str(m)) '.fig'])
