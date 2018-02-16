@@ -28,14 +28,30 @@ function [J,res,umodel] = MLE_cost_autoreg_art_data(cell_data,q_est,dx,xn,x_int,
             res(i,:) = res_tmp;
         
         else
+            
+%             if any(i == [3,5,6])
+%                 disp('hey')
+%             end
+            
             res_max = max(abs(res_tmp));
             res_max_loc = xc(abs(res_tmp)==res_max);
 
-    %         res_past_shock = res_tmp(xc>=res_max_loc);
-    %         res_before_shock = res_tmp(xc<res_max_loc);
+            
+            if res_tmp(abs(res_tmp)==res_max) >= 0 %max res value positive
 
-            ind_past_shock = find(xc>=res_max_loc(end));
-            ind_before_shock = find(xc<res_max_loc(end));
+                ind_past_shock = find(xc>=res_max_loc);
+                ind_before_shock = find(xc<res_max_loc);
+
+            elseif res_tmp(abs(res_tmp)==res_max) < 0 %max res value negative
+
+
+                ind_past_shock = find(xc>res_max_loc);
+                ind_before_shock = find(xc<=res_max_loc);
+
+
+            end
+
+            
 
             [B1,B2] = autoreg_mat(phi1(i),phi2(i),ind_past_shock,ind_before_shock,length(xc));
 

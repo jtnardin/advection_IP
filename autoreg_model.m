@@ -2,13 +2,13 @@
 m = 3;
 num_meth = 1;
 
-phihat1 = zeros(6,6);
-phihat2 = zeros(6,6);
+phihat1 = zeros(7,6);
+phihat2 = zeros(7,6);
 
 res_mod = cell(6,1);
 
 
-for xni = 1:6
+for xni = 1:7
 
     res_mod{xni} = zeros(size(res{xni}));
     
@@ -30,12 +30,26 @@ for xni = 1:6
         
         a_max = max(abs(a));
         a_max_loc = xdata(abs(a)==a_max);
+%         
+        if a(abs(a)==a_max) >= 0 %max res value positive
 
-        res_past_shock = a(xdata>=a_max_loc);
-        res_before_shock = a(xdata<a_max_loc);
-        
-        ind_past_shock = find(xdata>=a_max_loc);
-        ind_before_shock = find(xdata<a_max_loc);
+            res_past_shock = a(xdata>=a_max_loc);
+            res_before_shock = a(xdata<a_max_loc);
+
+            ind_past_shock = find(xdata>=a_max_loc);
+            ind_before_shock = find(xdata<a_max_loc);
+            
+        elseif a(abs(a)==a_max) < 0 %max res value negative
+           
+            
+            res_past_shock = a(xdata>a_max_loc);
+            res_before_shock = a(xdata<=a_max_loc);
+
+            ind_past_shock = find(xdata>a_max_loc);
+            ind_before_shock = find(xdata<=a_max_loc);
+           
+            
+        end
 
         
 %         phihat(xni,tj) = sum(x_past_shock(1:end-1).*x_past_shock(2:end))/sum(a(past_ind:end).^2);
@@ -59,7 +73,7 @@ for xni = 1:6
 
 end
 
-for i = 5
+for i = 1:7
 
     figure('units','normalized','outerposition',[0 0 1 1])
     for j = 2:6

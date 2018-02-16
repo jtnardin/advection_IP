@@ -46,12 +46,12 @@ num_meth_cell{3} = 'laxwend';
 num_meth_cell{4} = 'beamwarm';
 
 
-model_sims_ols = cell(length(xnsize)-1,1);
-model_sims_auto = cell(length(xnsize)-1,1);
-mod_res = cell(length(xnsize)-1,1);
-res = cell(length(xnsize)-1,1);
+model_sims_ols = cell(length(xnsize),1);
+model_sims_auto = cell(length(xnsize),1);
+mod_res = cell(length(xnsize),1);
+res = cell(length(xnsize),1);
 
-for i = 2:length(xnsize)
+for i = 1:length(xnsize)
     
     
     %space
@@ -77,20 +77,20 @@ for i = 2:length(xnsize)
     
     
     %get model sim
-    [J,res{i-1},model_sims_ols{i-1}] = MLE_cost_art_data(cell_data,...
+    [J,res{i},model_sims_ols{i}] = MLE_cost_art_data(cell_data,...
         q_ols{i,m,num_meth},dx,xn,x_int,xbd_0,xbd_1,dt,tn,IC,A,Abd,x,xdata,...
         num_meth_cell{num_meth},t,tdata);
     
     %fix res structure
-    res{i-1} = reshape(res{i-1},size(model_sims_ols{1}));
+    res{i} = reshape(res{i},length(tdata),length(xdata));
     
     %get model sim
-    [J,mod_res{i-1},model_sims_auto{i-1}] = MLE_cost_autoreg_art_data(cell_data,...
-        q_autoreg{i,m,num_meth},dx,xn,x_int,xbd_0,xbd_1,dt,tn,IC,A,Abd,x,xdata,...
+    [J,mod_res{i},model_sims_auto{i}] = MLE_cost_autoreg_art_data(cell_data,...
+        q_ols{i,m,num_meth},dx,xn,x_int,xbd_0,xbd_1,dt,tn,IC,A,Abd,x,xdata,...
         num_meth_cell{num_meth},t,tdata,phi1{i,m,num_meth},phi2{i,m,num_meth});
     
     %fix res structure
-    mod_res{i-1} = reshape(mod_res{i-1},size(model_sims_ols{1}));
+    mod_res{i} = reshape(mod_res{i},length(tdata),length(xdata));
     
 end
 
@@ -107,7 +107,7 @@ end
 colors = 'bgrkmc';
 
 
-for i = 1
+for i = 1:7
     
     for l = 1:2
         figure('unit','normalized','outerposition',[0 0 1 1])
@@ -117,9 +117,9 @@ for i = 1
             yyaxis left
                     hold on
                     if l == 1
-                        plot(xdata,model_sims_ols{i-1}(j,:),[colors(j) '-'])
+                        plot(xdata,model_sims_ols{i}(j,:),[colors(j) '-'])
                     elseif l == 2
-                        plot(xdata,model_sims_auto{i-1}(j,:),[colors(j) '-'])
+                        plot(xdata,model_sims_auto{i}(j,:),[colors(j) '-'])
                     end
                     
             ylabel('model')
@@ -127,9 +127,9 @@ for i = 1
             yyaxis right
                     hold on
                     if l == 1
-                        plot(xdata,res{i-1}(j,:),[colors(j) '*'])
+                        plot(xdata,res{i}(j,:),[colors(j) '*'])
                     elseif l == 2
-                        plot(xdata,mod_res{i-1}(j,:),[colors(j) '*'])
+                        plot(xdata,mod_res{i}(j,:),[colors(j) '*'])
                     end
                     plot([xdata(1) xdata(end)],zeros(1,2),'-')
                     axis([0 1 -1 1])

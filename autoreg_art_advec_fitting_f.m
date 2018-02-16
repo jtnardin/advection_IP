@@ -96,9 +96,27 @@ function [q_ols,J_ols,q_autoreg,J_autoreg,phi1,phi2] =  autoreg_art_advec_fittin
 
                  res_max = max(abs(res_tmp));
                  res_max_loc = xdata(abs(res_tmp)==res_max);
+                 
+                    if res_tmp(abs(res_tmp)==res_max) >= 0 %max res value positive
 
-                 res_past_shock = res_tmp(xdata>=res_max_loc);
-                 res_before_shock = res_tmp(xdata<res_max_loc);
+                        res_past_shock = res_tmp(xdata>=res_max_loc);
+                        res_before_shock = res_max_loc(xdata<res_max_loc);
+
+%                         ind_past_shock = find(xdata>=res_max_loc);
+%                         ind_before_shock = find(xdata<res_max_loc);
+
+                    elseif res_tmp(abs(res_tmp)==res_max) < 0 %max res value negative
+
+
+                        res_past_shock = res_tmp(xdata>res_max_loc);
+                        res_before_shock = res_max_loc(xdata<=res_max_loc);
+
+%                         ind_past_shock = find(xdata>res_max_loc);
+%                         ind_before_shock = find(xdata<=res_max_loc);
+
+
+                    end
+
                  
                  phi1(j) = abs(phihat_estimate(res_past_shock));
                  phi2(j) = abs(phihat_estimate(res_before_shock));       
