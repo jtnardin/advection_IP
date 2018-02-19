@@ -20,13 +20,14 @@ function [q_ols,J_ols,q_autoreg,J_autoreg,phi1,phi2] =  autoreg_art_advec_fittin
     load(['advection_art_data' IC_str '.mat'])
 
 
-    xdi = ceil(m/2);
-    sigmaj = mod(m,2);
+    
+    xdi = ceil(m/length(eta));
+    sigmaj = mod(m,length(eta));
     
     if sigmaj == 0
-        sigmaj = 2;
+        sigmaj = length(eta);
     end
-    
+
     
     %select exp. data
     cell_data = data{xdi,sigmaj};
@@ -100,7 +101,7 @@ function [q_ols,J_ols,q_autoreg,J_autoreg,phi1,phi2] =  autoreg_art_advec_fittin
                     if res_tmp(abs(res_tmp)==res_max) >= 0 %max res value positive
 
                         res_past_shock = res_tmp(xdata>=res_max_loc);
-                        res_before_shock = res_max_loc(xdata<res_max_loc);
+                        res_before_shock = res_tmp(xdata<res_max_loc);
 
 %                         ind_past_shock = find(xdata>=res_max_loc);
 %                         ind_before_shock = find(xdata<res_max_loc);
@@ -109,7 +110,7 @@ function [q_ols,J_ols,q_autoreg,J_autoreg,phi1,phi2] =  autoreg_art_advec_fittin
 
 
                         res_past_shock = res_tmp(xdata>res_max_loc);
-                        res_before_shock = res_max_loc(xdata<=res_max_loc);
+                        res_before_shock = res_tmp(xdata<=res_max_loc);
 
 %                         ind_past_shock = find(xdata>res_max_loc);
 %                         ind_before_shock = find(xdata<=res_max_loc);

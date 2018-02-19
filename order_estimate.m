@@ -4,23 +4,13 @@
 clear all; clc
 
 
-IC_str = '_gauss';
+IC_str = '_front';
 
 
-%load data and best-fit rates
-if strcmp(IC_str,'_step')
-    
-    load('advection_rates_step_IC_2.mat')
-    load('advection_art_data.mat')
-    
-       
-elseif strcmp(IC_str,'_gauss')
-
-    load('advection_rates_gauss_IC.mat')
-    load('advection_art_data_gauss.mat')
-    
-    
-end
+%load best-fit params, data, and initial condition
+load(['advection_rates' IC_str '_IC.mat'])
+load(['advection_art_data' IC_str '.mat'])
+load('rel_range_sims.mat')
 
 
 xnsize = [21,41,81,161,321,641,2*640+1];
@@ -65,8 +55,16 @@ for i = 1:4
 %         end 
 
 
+            
+            if strcmp(IC_str,'_gauss')
+                rel_range = rel_range_gauss{j};
+            elseif strcmp(IC_str,'_front')
+                rel_range = rel_range_front{j};
+            end
+
+
             %include all points
-            poly_table{i,j} = polyfit(log(1./xnsize)',log(squeeze(J(:,i,j))),1);
+            poly_table{i,j} = polyfit(log(1./xnsize(rel_range))',log(squeeze(J(rel_range,i,j))),1);
             order_table(i,j) = poly_table{i,j}(1);
 
 
@@ -100,7 +98,7 @@ end
 
 %%%%% write to latex table.
 
-write_latex_table(['J_1' IC_str '.tex'],order_table)
+write_latex_table(['J_1' IC_str '.tex'],order_table')
 write_latex_table(['J_2' IC_str '.tex'],squeeze(mean(phat)))
 % 
 
@@ -111,7 +109,14 @@ q_poly_table = cell(4,4);
 for i = 1:4
     for j = 1:4
         
-        q_poly_table{i,j} = polyfit(log(1./xnsize)',log(squeeze(q_norm(:,i,j))),1);
+       if strcmp(IC_str,'_gauss')
+            rel_range = rel_range_gauss{j};
+        elseif strcmp(IC_str,'_front')
+            rel_range = rel_range_front{j};
+        end
+
+        
+        q_poly_table{i,j} = polyfit(log(1./xnsize(rel_range))',log(squeeze(q_norm(rel_range,i,j))),1);
         q_order_table(i,j) = q_poly_table{i,j}(1);
              
     end

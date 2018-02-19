@@ -20,11 +20,11 @@ function [q_f,J_f] =  art_advec_fitting_f(xni,m,num_meth,IC_str)
     load(['advection_art_data' IC_str '.mat'])
 
 
-    xdi = ceil(m/2);
-    sigmaj = mod(m,2);
+    xdi = ceil(m/length(eta));
+    sigmaj = mod(m,length(eta));
     
     if sigmaj == 0
-        sigmaj = 2;
+        sigmaj = length(eta);
     end
     
     
