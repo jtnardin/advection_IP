@@ -2,11 +2,13 @@
 %determine and return the rate of advection and corresponding sigma, sigma_inv
 %functions.
 
-function [g,sigma,sigma_inv] = advection_rate(input,alpha,beta)
+function [g,sigma,sigma_inv,galpha,gbeta] = advection_rate(input,alpha,beta)
 
     if strcmp(input,'root')
         
         g = @(x) alpha*x.^(1/beta);
+        galpha = @(x) x.^(1/beta);
+        gbeta = @(x) alpha/beta*x.^(1/beta-1);
 
         %sigma, sigma_inv terms
         sigma = @(x,x0) 1/(alpha*(1-1/beta))*(x.^(1-1/beta)-x0.^(1-1/beta));
