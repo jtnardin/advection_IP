@@ -3,7 +3,7 @@
 
 function [q_f,J_f] =  art_advec_fitting_f(xni,m,num_meth,IC_str)
 
-    simnum = 1;
+    simnum = 5;
 
     lambda = 1/2;
     
@@ -18,7 +18,7 @@ function [q_f,J_f] =  art_advec_fitting_f(xni,m,num_meth,IC_str)
 
     %load data
     load(['advection_art_data' IC_str '.mat'])
-
+    q0=q0;
 
     xdi = ceil(m/length(eta));
     sigmaj = mod(m,length(eta));
@@ -66,10 +66,10 @@ function [q_f,J_f] =  art_advec_fitting_f(xni,m,num_meth,IC_str)
 
     options = optimset();%'display','iter');
 
-    for i = 1%:simnum
+    parfor i = 1:simnum
 
              %q = [chi,alpha,beta,D_v]^T;
-             q0_all{i} = q0;
+             q0_all{i} = q0+.1*randn(size(q0));
              LB = zeros(2,1);
              UB = inf(2,1);
 
@@ -87,8 +87,8 @@ function [q_f,J_f] =  art_advec_fitting_f(xni,m,num_meth,IC_str)
 %             toc
     end
 
-    q_f = q_all{1};
-    J_f = J_all(1);
+    q_f = q_all{J_all==min(J_all)};
+    J_f = J_all(J_all==min(J_all));
     
 %     save(['/scratch/summit/jona8898/chem_fitting/chem_fitting_art_data_xdn_'...
 %         num2str(xdi) '_xmn_' num2str(xni) '_sigma_' num2str(sigmaj)...
