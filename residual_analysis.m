@@ -4,11 +4,11 @@ clear all; clc
 %%%%and data set we're compating
 IC_str = '_front';
 num_meth = 1;
-m = 3;
+m = 7;
 
 
 %load best-fit params, data, and initial condition
-load(['advection_rates' IC_str '_IC.mat'])
+load(['advection_rates_autoreg' IC_str '_IC.mat'])
 load(['advection_art_data' IC_str '.mat'])
 phi = IC_spec(IC_str(2:end));
 
@@ -17,22 +17,26 @@ phi = IC_spec(IC_str(2:end));
 xnsize = [21,41,81,161,321,641,2*640+1];
 lambda = 1/2;
 
-xndata = [length(xd{1}), length(xd{2})];
+for i = 1:length(xd)
+    xndata(i) = length(xd{i});
+end
+for i = 1:length(eta)
+    eta_vec(i) = eta(i);
+end
 
 xnstr = zeros(1,4);
 eta_str = zeros(1,4);
 
-
-%indices
-xdi = ceil(m/2);
-sigmaj = mod(m,2);
+xdi = ceil(m/length(eta_vec));
+sigmaj = mod(m,length(eta_vec));
 
 if sigmaj == 0
-    sigmaj = 2;
+    sigmaj = length(eta_vec);
 end
 
 xnstr(m) = xndata(xdi);
-eta_str(m) = eta(sigmaj);
+eta_str(m) = eta_vec(sigmaj);
+
 
 %select exp. data
 cell_data = data{xdi,sigmaj};
@@ -47,9 +51,9 @@ num_meth_cell{4} = 'beamwarm';
 
 
 model_sims = cell(length(xnsize)-1,1);
-res = cell(length(xnsize)-1,1);
+res = cell(length(xnsize),1);
 
-for i = 2:length(xnsize)
+for i = 1:length(xnsize)
     
     
     %space
@@ -74,12 +78,12 @@ for i = 2:length(xnsize)
     [A,Abd] = aMatrixupwind(xn,num_meth_cell{num_meth});
     
     %get model sim
-    [J,res{i-1},model_sims{i-1}] = MLE_cost_art_data(cell_data,...
-        q{i,m,num_meth},dx,xn,x_int,xbd_0,xbd_1,dt,tn,IC,A,Abd,x,xdata,...
+    [J,res{i},model_sims{i}] = MLE_cost_art_data(cell_data,...
+        q_ols{i,m,num_meth},dx,xn,x_int,xbd_0,xbd_1,dt,tn,IC,A,Abd,x,xdata,...
         num_meth_cell{num_meth},t,tdata);
     
     %fix res structure
-    res{i-1} = reshape(res{i-1},size(model_sims{1}));
+    res{i} = reshape(res{i},size(model_sims{1}));
     
 end
 
@@ -133,7 +137,7 @@ for i = 5
                 hold on
                 plot(xdata,res{i-1}(j,:),[colors(j) '*'])
                 plot([xdata(1) xdata(end)],zeros(1,2),'-')
-                axis([0 1 -1 1])
+%                 axis([0 1 -1 1])
                 
         xlabel('x')
         ylabel('model - data')

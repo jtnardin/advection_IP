@@ -1,5 +1,5 @@
 
-IC_str = '_gauss';
+IC_str = '_front';
 
 load(['CI' IC_str '_OLS.mat'])
 load(['advection_art_data' IC_str '.mat'])
@@ -57,7 +57,7 @@ for j = 1:4
 
         for l = 1:7
             C = CI{l,i,j};
-            if ~any(isnan(C(:)))
+            if (~any(isnan(C(:))))&&(~isempty(C))
                 rectangle('position',[C(1,1) C(2,1) C(1,2)-C(1,1) C(2,2)-C(2,1)],...
                     'edgecolor',repmat(1-(l+1)/8,1,3))
             end
@@ -70,10 +70,19 @@ for j = 1:4
                 num2str(eta_str(i)^2)),'interpreter','latex')
 
         if strcmp(IC_str,'_front')
-            axis([.1 .4 .4 .6])
+            axis([.1 .5 .4 .6])
         elseif strcmp(IC_str,'_gauss')
-            axis([.25 .35 .35 .45])
+            if j == 1
+                axis([.08 .6 .3 .6])
+            elseif j == 2
+                axis([.2 .4 .3 .5])
+            elseif j ==3
+                axis([.15 .4 .3 .45])
+            elseif j == 4
+                axis([.2 .35 .38 .45])
+            end
         end
+        
 
     end
 

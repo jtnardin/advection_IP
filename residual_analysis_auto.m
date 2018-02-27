@@ -4,7 +4,7 @@ clear all; clc
 %%%%and data set we're compating
 IC_str = '_front';
 num_meth = 1;
-m = 3;
+m = 6;
 
 
 %load best-fit params, data, and initial condition
@@ -17,22 +17,27 @@ phi = IC_spec(IC_str(2:end));
 xnsize = [21,41,81,161,321,641,2*640+1];
 lambda = 1/2;
 
-xndata = [length(xd{1}), length(xd{2})];
+
+
+for i = 1:length(xd)
+    xndata(i) = length(xd{i});
+end
+for i = 1:length(eta)
+    eta_vec(i) = eta(i);
+end
 
 xnstr = zeros(1,4);
 eta_str = zeros(1,4);
 
-
-%indices
-xdi = ceil(m/2);
-sigmaj = mod(m,2);
+xdi = ceil(m/length(eta_vec));
+sigmaj = mod(m,length(eta_vec));
 
 if sigmaj == 0
-    sigmaj = 2;
+    sigmaj = length(eta_vec);
 end
 
 xnstr(m) = xndata(xdi);
-eta_str(m) = eta(sigmaj);
+eta_str(m) = eta_vec(sigmaj);
 
 %select exp. data
 cell_data = data{xdi,sigmaj};
@@ -84,9 +89,12 @@ for i = 1:length(xnsize)
     %fix res structure
     res{i} = reshape(res{i},length(tdata),length(xdata));
     
+%     [phi1{i,m,num_meth},phi2{i,m,num_meth}] = autoregression_terms_compute(res,xdata);
+    
+    
     %get model sim
     [J,mod_res{i},model_sims_auto{i}] = MLE_cost_autoreg_art_data(cell_data,...
-        q_ols{i,m,num_meth},dx,xn,x_int,xbd_0,xbd_1,dt,tn,IC,A,Abd,x,xdata,...
+        q_autoreg{i,m,num_meth},dx,xn,x_int,xbd_0,xbd_1,dt,tn,IC,A,Abd,x,xdata,...
         num_meth_cell{num_meth},t,tdata,phi1{i,m,num_meth},phi2{i,m,num_meth});
     
     %fix res structure
@@ -107,7 +115,7 @@ end
 colors = 'bgrkmc';
 
 
-for i = 1:7
+for i = 4
     
     for l = 1:2
         figure('unit','normalized','outerposition',[0 0 1 1])
@@ -149,11 +157,18 @@ for i = 1:7
 
 
         end
+    
+
+%         if l == 1
+%             exportfig(gcf,['residual_' IC_str '_' num2str(i) '_noise_' num2str(eta_str(m)) '.eps'],'fontsize',2,'color','rgb')
+%             saveas(gcf,['residual_' IC_str '_' num2str(i) '_noise_' num2str(eta_str(m)) '.fig'])
+%         elseif l == 2
+%             exportfig(gcf,['mod_residual_' IC_str '_' num2str(i) '_noise_' num2str(eta_str(m)) '.eps'],'fontsize',2,'color','rgb')
+%             saveas(gcf,['mod_residual_' IC_str '_' num2str(i) '_noise_' num2str(eta_str(m)) '.fig'])
+%         end
+        
     end
     
 
-    
 end
 
-% exportfig(gcf,['residual_' IC_str '_' num2str(i) '_noise_' num2str(eta_str(m)) '.eps'],'fontsize',2,'color','rgb')
-% saveas(gcf,['residual_' IC_str '_' num2str(i) '_noise_' num2str(eta_str(m)) '.fig'])
