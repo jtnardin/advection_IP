@@ -5,21 +5,19 @@ clear all;
 
 %%%%specify which initial condition, method,
 %%%%and data set we're compating
-IC_str = '_gauss';
+IC_str = '_front';
+
+stat_meth = 'autor';
 
 CI = cell(7,8,4);
 
-for xni = 7
-    for m = 1:8
-        for num_meth = 1:4
-
-% num_meth = 4;
-% m = 7;
-% xni = 6;
+for xni = 1:5
+    for m = 5%:8
+        for num_meth = 1
 
             [xni,m,num_meth]
 
-%load best-fit params, data, and initial condition
+            %load best-fit params, data, and initial condition
 
             if strcmp(IC_str,'_front')
                 load(['advection_rates_autoreg' IC_str '_IC.mat'])
@@ -30,8 +28,13 @@ for xni = 7
             load(['advection_art_data' IC_str '.mat'])
             phi = IC_spec(IC_str(2:end));
 
-
-            q = q_ols{xni,m,num_meth};
+            if strcmp(stat_meth,'OLS')
+                q = q_ols{xni,m,num_meth};
+            elseif strcmp(stat_meth,'autor')
+                q = q_autoreg{xni,m,num_meth};
+            else
+                error('incorrect statistical model')
+            end
 
             %grid sizes
             xnsize = [21,41,81,161,321,641,2*640+1];
@@ -82,26 +85,27 @@ for xni = 7
 
             %load matrices for computation
             [A,Abd] = aMatrixupwind(xn,num_meth_cell{num_meth});
+            
+
             tic
-            %get model sim
-            [model_sim,s1model,s2model,eta_hat,res] = sensitivity_model_sim(cell_data,q,dx,xn...
-                ,x_int,xbd_0,xbd_1,dt,tn,IC,A,Abd,x,xdata,num_meth_cell{num_meth},t,tdata);
+
+                if strcmp(stat_meth,'OLS')
+
+                    %get model sim
+                    [model_sim,s1model,s2model,eta_hat,res,~] = ...
+                        sensitivity_model_sim(cell_data,q,dx,xn,x_int,xbd_0,...
+                        xbd_1,dt,tn,IC,A,Abd,x,xdata,num_meth_cell{num_meth},...
+                        t,tdata,stat_meth);
+                elseif strcmp(stat_meth,'autor')
+                    [model_sim,s1model,s2model,eta_hat,res] = ...
+                        sensitivity_model_auto_sim(cell_data,q,dx,xn,x_int,xbd_0,...
+                        xbd_1,dt,tn,IC,A,Abd,x,xdata,num_meth_cell{num_meth},...
+                        t,tdata,phi1{xni,m,num_meth},phi1{xni,m,num_meth});
+                end
+                    
             toc
 
-            %plot sensitivities
-%             figure
-%             subplot(3,1,1)
-% 
-%             plot(xdata,model_sim)
-% 
-%             subplot(3,1,2)
-% 
-%             plot(xdata,s1model)
-% 
-%             subplot(3,1,3)
-% 
-%             plot(xdata,s2model)
-
+           
 
             %compute standard error
             F = [s1model(:) s2model(:)];
@@ -121,7 +125,7 @@ for xni = 7
     end
 end
 
-save(['CI' IC_str '_OLS_2.mat'],'CI')
+save(['CI' IC_str '_' stat_meth '.mat'],'CI')
 
 
 
