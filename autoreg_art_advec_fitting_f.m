@@ -1,7 +1,7 @@
 %art_advec_fitting_f.m written 2-2-18 by JTN to fit numerical model to
 %artifical data from u_t+(g(x)u)_x=0.
 
-function [q_ols,J_ols,q_autoreg,J_autoreg,phi1,phi2] =  autoreg_art_advec_fitting_f(xni,m,num_meth,IC_str)
+function [q_ols,J_ols,q_autoreg,J_autoreg,phi1,phi2] =  autoreg_art_advec_fitting_f(xni,m,num_meth,IC_str,q_ols)
 
     simnum = 5;
 
@@ -61,13 +61,14 @@ function [q_ols,J_ols,q_autoreg,J_autoreg,phi1,phi2] =  autoreg_art_advec_fittin
 
 
 
-    %%%% Now fit to migration data. First initialize q and cost vectors
-    q_ols = cell(simnum,1);
-    q0_all = cell(simnum,1);
-    J_ols = zeros(simnum,1);
+%     %%%% Now fit to migration data. First initialize q and cost vectors
+%     q_ols = cell(simnum,1);
+%     q0_all = cell(simnum,1);
+%     J_ols = zeros(simnum,1);
+    J_ols = 1;
 
-    q_autoreg = zeros(1,length(q0));
-    J_autoreg = zeros(1,1);
+%     q_autoreg = zeros(1,length(q0));
+%     J_autoreg = zeros(1,1);
     
     phi1 = zeros(6,1);
     phi2 = zeros(6,1);
@@ -78,21 +79,21 @@ function [q_ols,J_ols,q_autoreg,J_autoreg,phi1,phi2] =  autoreg_art_advec_fittin
      UB = inf(2,1);
 
     
-    parfor i = 1:simnum
-
-
-             q0_all{i} = q0 + .1*randn(size(q0));
-            
-
-            % obtain OLS estimate
-            [q_ols{i},J_ols(i)] = fmincon(@(q) MLE_cost_art_data(cell_data,...
-                q,dx,xn,x_int,xbd_0,xbd_1,dt,tn,IC,A,Abd,x,xdata,num_meth,...
-                t,tdata),q0_all{i},[],[],[],[],LB,UB,[],options);
-            
-    end
-    
-    q_ols = q_ols{J_ols == min(J_ols)};
-    J_ols = J_ols(J_ols==min(J_ols));
+%     parfor i = 1:simnum
+% 
+% 
+%              q0_all{i} = q0 + .1*randn(size(q0));
+%             
+% 
+%             % obtain OLS estimate
+%             [q_ols{i},J_ols(i)] = fmincon(@(q) MLE_cost_art_data(cell_data,...
+%                 q,dx,xn,x_int,xbd_0,xbd_1,dt,tn,IC,A,Abd,x,xdata,num_meth,...
+%                 t,tdata),q0_all{i},[],[],[],[],LB,UB,[],options);
+%             
+%     end
+%     
+%     q_ols = q_ols{J_ols == min(J_ols)};
+%     J_ols = J_ols(J_ols==min(J_ols));
             
         %now estimate phihat values
         [~,~,umodel] = MLE_cost_art_data(cell_data,q_ols,dx,xn,x_int,xbd_0,...
@@ -132,14 +133,26 @@ function [q_ols,J_ols,q_autoreg,J_autoreg,phi1,phi2] =  autoreg_art_advec_fittin
 
         end
 
+        q_autoregc = cell(simnum,1);
+        J_autoregc = zeros(simnum,1);
+        
 
-        % obtain autoreg estimate
-        [q_autoreg,J_autoreg] = fmincon(@(q) MLE_cost_autoreg_art_data(cell_data,...
-            q,dx,xn,x_int,xbd_0,xbd_1,dt,tn,IC,A,Abd,x,xdata,num_meth,...
-            t,tdata,phi1,phi2),q_ols,[],[],[],[],LB,UB,[],options);
+        parfor i = 1:simnum
+            if i == 1
+                q_guess = q0;
+            elseif i == 2
+                q_guess = q_ols;
+            else
+                q_guess = q_ols + .1*randn(size(q_ols));
+            end
+            % obtain autoreg estimate
+            [q_autoregc{i},J_autoregc(i)] = fmincon(@(q) MLE_cost_autoreg_art_data(cell_data,...
+                q,dx,xn,x_int,xbd_0,xbd_1,dt,tn,IC,A,Abd,x,xdata,num_meth,...
+                t,tdata,phi1,phi2),q_guess,[],[],[],[],LB,UB,[],options);
+        end
 
-
-
+        q_autoreg = q_autoregc{J_autoregc==min(J_autoregc)};
+        J_autoreg = J_autoregc(J_autoregc==min(J_autoregc));
     
 %     save(['/scratch/summit/jona8898/chem_fitting/chem_fitting_art_data_xdn_'...
 %         num2str(xdi) '_xmn_' num2str(xni) '_sigma_' num2str(sigmaj)...

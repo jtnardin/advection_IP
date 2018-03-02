@@ -11,16 +11,16 @@ stat_meth = 'autor';
 
 CI = cell(7,8,4);
 
-for xni = 1:5
-    for m = 5%:8
-        for num_meth = 1
+for xni = 1:7
+    for m = 1:8
+        for num_meth = [1 4]
 
             [xni,m,num_meth]
 
             %load best-fit params, data, and initial condition
 
             if strcmp(IC_str,'_front')
-                load(['advection_rates_autoreg' IC_str '_IC.mat'])
+                load(['advection_rates_autoreg' IC_str '_IC_3_1.mat'])
             elseif strcmp(IC_str,'_gauss')
                 load(['advection_rates' IC_str '_IC.mat'])
             end
@@ -38,7 +38,7 @@ for xni = 1:5
 
             %grid sizes
             xnsize = [21,41,81,161,321,641,2*640+1];
-            lambda = 1/80;
+            lambda = 1/2;
 
             xndata = [length(xd{1}), length(xd{2})];
 
@@ -92,10 +92,10 @@ for xni = 1:5
                 if strcmp(stat_meth,'OLS')
 
                     %get model sim
-                    [model_sim,s1model,s2model,eta_hat,res,~] = ...
+                    [model_sim,s1model,s2model,eta_hat,res] = ...
                         sensitivity_model_sim(cell_data,q,dx,xn,x_int,xbd_0,...
                         xbd_1,dt,tn,IC,A,Abd,x,xdata,num_meth_cell{num_meth},...
-                        t,tdata,stat_meth);
+                        t,tdata);
                 elseif strcmp(stat_meth,'autor')
                     [model_sim,s1model,s2model,eta_hat,res] = ...
                         sensitivity_model_auto_sim(cell_data,q,dx,xn,x_int,xbd_0,...
@@ -125,7 +125,7 @@ for xni = 1:5
     end
 end
 
-save(['CI' IC_str '_' stat_meth '.mat'],'CI')
+% % % % % % save(['CI' IC_str '_' stat_meth '.mat'],'CI')
 
 
 

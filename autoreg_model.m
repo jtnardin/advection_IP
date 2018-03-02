@@ -33,6 +33,7 @@ for xni = 1:7
 %         
         if a(abs(a)==a_max) >= 0 %max res value positive
 
+            
             res_past_shock = a(xdata>=a_max_loc);
             res_before_shock = a(xdata<a_max_loc);
 
@@ -58,7 +59,8 @@ for xni = 1:7
         [B1,B2] = autoreg_mat(phihat1(xni,tj),phihat2(xni,tj),ind_past_shock,ind_before_shock,length(xdata));
         
 
-        res_mod{xni}(tj,:) = (B1+B2)*a';
+%         res_mod{xni}(tj,:) = (B1+B2)*a';
+        res_mod{xni}(tj,:) = (B1 + B2)*a';
 
     %     figure
     %     subplot(2,1,1)
@@ -73,17 +75,17 @@ for xni = 1:7
 
 end
 
-for i = 1:7
+for i = 3:7
 
     figure('units','normalized','outerposition',[0 0 1 1])
     for j = 2:6
         subplot(3,2,j)
 
-%         plot(res{i}(j,:),['b.'])
+        plot(xdata,res{i}(j,:),['k.'])
         hold on
         plot(xdata,res_mod{i}(j,:),[colors(j) '*'])
         plot([xdata(1) xdata(end)],[0 0],'k')
-        axis([0 1 -1 1])
+%         axis([0 1 -1 1])
         
         xlabel('x')
         ylabel('A*(model - data)')
@@ -96,5 +98,5 @@ for i = 1:7
 end
 
 
-exportfig(gcf,['mod_residual_' IC_str '_' num2str(i) '_noise_' num2str(eta_str(m)) '.eps'],'fontsize',2,'color','rgb')
-saveas(gcf,['mod_residual_' IC_str '_' num2str(i) '_noise_' num2str(eta_str(m)) '.fig'])
+% exportfig(gcf,['mod_residual_' IC_str '_' num2str(i) '_noise_' num2str(eta_str(m)) '.eps'],'fontsize',2,'color','rgb')
+% saveas(gcf,['mod_residual_' IC_str '_' num2str(i) '_noise_' num2str(eta_str(m)) '.fig'])
