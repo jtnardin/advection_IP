@@ -2,50 +2,72 @@ IC_str = '_front';
 
 
 %load best-fit params, data, and initial condition
-load(['advection_rates_autoreg' IC_str '_IC.mat'])
-load(['advection_art_data' IC_str '.mat'])
+% load(['advection_rates_autoreg' IC_str '_IC_2_28_BW.mat'])
+
+
+load('advection_rates_autoreg_front_IC_3_6.mat')
+
+
+load(['advection_art_data' IC_str '_3_6.mat'])
 phi = IC_spec(IC_str(2:end));
 
+num_meth = 4;
+
+num_meth_cell = cell(4,1);
+num_meth_cell{1} = 'upwind';
+num_meth_cell{2} = 'laxfried';
+num_meth_cell{3} = 'laxwend';
+num_meth_cell{4} = 'beamwarm';
+
+for i = 1:length(xd)
+    xndata(i) = length(xd{i});
+end
+for i = 1:length(eta)
+    eta_vec(i) = eta(i);
+end
+
+xnsize = [21,41,81,161,321,641,2*640+1];
+
+xnstr = zeros(1,9);
+eta_str = zeros(1,9);
 
 
-xndata = [10, 50];
-eta = [0 0.05];
-
-xnstr = zeros(1,4);
-eta_str = zeros(1,4);
-
-
-for m = 1:4
+for m = 1:9
     
-    xdi = ceil(m/2);
-    sigmaj = mod(m,2);
+    xdi = ceil(m/length(eta_vec));
+    sigmaj = mod(m,length(eta_vec));
+    
+    if sigmaj == 0
+        sigmaj = length(eta_vec);
+    end
+   
     
     if sigmaj == 0
         sigmaj = 2;
     end
     
     xnstr(m) = xndata(xdi);
-    eta_str(m) = eta(sigmaj);
+    eta_str(m) = eta_vec(sigmaj);
     
 end
 
 
-qnorm1 = zeros(7,4);
-qnorm2 = zeros(7,4);
+qnorm1 = zeros(7,9);
+qnorm2 = zeros(7,9);
 for i = 1:7
-    for j = 1:4
-        qnorm1(i,j) = norm(q_ols{i,j,1}-q0);
-        qnorm2(i,j) = norm(q_autoreg{i,j,1}-q0);
+    for j = 1:9
+        qnorm1(i,j) = norm(q_ols{i,j,num_meth}-q0);
+        qnorm2(i,j) = norm(q_autoreg{i,j,num_meth}-q0);
     end
 end
 
 figure('units','normalized','outerposition',[0 0 1 1])
 
-for i = 1:4
-    subplot(2,2,i)
-    loglog(1./xnsize,qnorm1(:,i))
+for i = 1:9
+    subplot(3,3,i)
+    loglog(1./xnsize,qnorm1(:,i),'linewidth',2)
     hold on
-    loglog(1./xnsize,qnorm2(:,i))
+    loglog(1./xnsize,qnorm2(:,i),'linewidth',2)
     
     if i == 1
         legend('OLS','autoreg','location','northwest')
@@ -56,9 +78,16 @@ for i = 1:4
     
     xlabel('h')
     ylabel('$\|\cdot\|_2$','interpreter','latex')
+    
+
+    if num_meth == 1
+        axis([10^-3.5 10^-1.15 10^-3 1])
+    elseif num_meth == 2
+        axis([10^-3.5 10^-1.15 10^-1 10])
+    end
 
 end
 
 
-exportfig(gcf,['q_auto_plot' IC_str '.eps'],'fontsize',1.5,'color','rgb')
-saveas(gcf,['q_auto_plot' IC_str '.fig'])
+% exportfig(gcf,['q_auto_compare' IC_str '_' num_meth_cell{num_meth} '_3_6.eps'],'fontsize',1.5,'color','rgb')
+% saveas(gcf,['q_auto_compare' IC_str '_' num_meth_cell{num_meth} '_3_6.fig'])

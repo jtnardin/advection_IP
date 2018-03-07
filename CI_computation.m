@@ -9,10 +9,12 @@ IC_str = '_front';
 
 stat_meth = 'autor';
 
-CI = cell(7,8,4);
+CI = cell(7,9,4);
 
-for xni = 1:7
-    for m = 1:8
+
+
+for xni = 7
+    for m = 1:9
         for num_meth = [1 4]
 
             [xni,m,num_meth]
@@ -20,12 +22,12 @@ for xni = 1:7
             %load best-fit params, data, and initial condition
 
             if strcmp(IC_str,'_front')
-                load(['advection_rates_autoreg' IC_str '_IC_3_1.mat'])
+                load(['advection_rates_autoreg' IC_str '_IC_3_6.mat'])
             elseif strcmp(IC_str,'_gauss')
-                load(['advection_rates' IC_str '_IC.mat'])
+                load(['advection_rates' IC_str '_IC_3_6.mat'])
             end
 
-            load(['advection_art_data' IC_str '.mat'])
+            load(['advection_art_data' IC_str '_3_6.mat'])
             phi = IC_spec(IC_str(2:end));
 
             if strcmp(stat_meth,'OLS')
@@ -38,9 +40,11 @@ for xni = 1:7
 
             %grid sizes
             xnsize = [21,41,81,161,321,641,2*640+1];
-            lambda = 1/2;
+            lambda = 1/20;
 
-            xndata = [length(xd{1}), length(xd{2})];
+            for i = 1:length(xd)
+                xndata(i) = length(xd{i});
+            end
 
 
             xdi = ceil(m/length(eta));
@@ -125,7 +129,7 @@ for xni = 1:7
     end
 end
 
-% % % % % % save(['CI' IC_str '_' stat_meth '.mat'],'CI')
+% save(['CI' IC_str '_' stat_meth '_3_6.mat'],'CI')
 
 
 

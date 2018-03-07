@@ -1,8 +1,8 @@
 
 IC_str = '_front';
-stat_meth = '_autor';
+stat_meth = '__autor';
 
-% load(['CI' IC_str '_OLS.mat'])
+load(['CI' IC_str stat_meth '.mat'])
 load(['advection_art_data' IC_str '.mat'])
 
 xnsize = [21,41,81,161,321,641,2*640+1];
@@ -28,11 +28,11 @@ for i = 1:length(eta)
 end
 
 
-xnstr = zeros(1,8);
-eta_str = zeros(1,8);
+xnstr = zeros(1,numel(data));
+eta_str = zeros(1,numel(data));
 
 
-for m = 1:8
+for m = 1:numel(data)
     
 
     xdi = ceil(m/length(eta_vec));
@@ -55,9 +55,9 @@ for j = [1 4]
 
     figure('units','normalized','outerposition',[0 0 1 1])
     
-    for i = 1:8
+    for i = 1:numel(data)
 
-        subplot(2,4,i)
+        subplot(size(data,1),size(data,2),i)
         hold on
         plot(log2(q0(1)),log2(q0(2)),'k*')
 
@@ -87,11 +87,12 @@ for j = [1 4]
             end
         elseif strcmp(IC_str,'_gauss')
             if j == 1
-                axis([-3.5 -1.5 -1.4 -.75])
+%                 axis([-3.5 -1.5 -1.4 -.75])
+                axis([-3.5 -1.5 -1.4 -.5])
             elseif j == 2
                 axis([-2 -1.5 -1.35 -1.26])
             elseif j ==3
-%                 axis([-1.5 -2 -1.35 -1.26])
+                axis([-3 -1 -2 -1])
             elseif j == 4
                 axis([-2.4 -1.65 -1.4 -1.15])
             end
@@ -100,8 +101,9 @@ for j = [1 4]
         
     end
 
-% %     exportfig(gcf,['CI_h_plot' IC_str '_' num2str(j) stat_meth '.eps'],'fontsize',1.5,'color','rgb')
-% %     saveas(gcf,['CI_h_plot' IC_str '_' num2str(j) stat_meth '.fig'])
+%     exportfig(gcf,['CI_h_plot' IC_str '_' num2str(j) stat_meth '_3_6.eps'],'fontsize',1.5,'color','rgb')
+%     saveas(gcf,['CI_h_plot' IC_str '_' num2str(j) stat_meth '_3_6.fig'])
 
     
 end
+
