@@ -84,7 +84,7 @@ for k = 2
             xnstr = xndata(xdi);
             eta_str = eta_vec(sigmaj);
 
-            [Td,Xd] = meshgrid(td,xd{xdi});
+            [Td,Xd] = meshgrid(td(2:end),xd{xdi});
 
             u0 = soln(Td,Xd);
 
@@ -96,7 +96,7 @@ for k = 2
 
             u0 = u0';
 
-            epsilon = data{xdi,sigmaj}-u0;
+            epsilon = data{xdi,sigmaj}(2:end,:)-u0;
 
             A_J = 1/(numel(Td))*sum(epsilon(:).^2);
             B_J = zeros(7,1);
@@ -142,6 +142,8 @@ for k = 2
                 [J,res,uh,~] = MLE_cost_art_data(data{xdi,sigmaj},...
                     q,dx,xn,x_int,xbd_0,xbd_1,dt,tn,IC,A,Abd,x,xd{xdi},...
                     num_meth_cell{num_meth},t,td,model_str);
+                
+                uh = uh(2:end,:);
 
                 B_J(i) = 1/numel(Td)*sum((u0(:) - u0theta_hat(:)).^2);
                 C_J(i) = 1/numel(Td)*sum((u0theta_hat(:) - uh(:)).^2);
@@ -190,16 +192,25 @@ for k = 2
 %             figure(fig_log)
             subplot(length(xndata),length(eta),j)
             h = 1./(xnsize-1);
-            loglog(h,abs(A_J*ones(7,1)),'.-','markersize',10)
+            loglog(h,J_final,'.-','markersize',17,'linewidth',2)
             hold on
+            loglog(h,abs(A_J*ones(7,1)),'.-','markersize',10)
             loglog(h,abs(B_J),'.-','markersize',10)
             loglog(h,abs(C_J),'.-','markersize',10)
             loglog(h,abs(D_J),'.-','markersize',10)
             loglog(h,abs(E_J),'.-','markersize',10)
             loglog(h,abs(F_J),'.-','markersize',10)
-            loglog(h,J_final,'.-','markersize',17,'linewidth',2)
+            
+            text(h(end), J_final(end), 'J', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',8)
+            text(h(end), A_J, 'A', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',8)
+            text(h(end), B_J(end), 'B', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',8)
+            text(h(end), C_J(end), 'C', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',8)
+            text(h(end), abs(D_J(end)), 'D', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',8)
+            text(h(end), abs(E_J(end)), 'E', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',8)
+            text(h(end), abs(F_J(end)), 'F', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',8)
+            
             if j == 2
-                    h=legend('A','B','C','D','E','F','J');
+                    h=legend('J','A','B','C','D','E','F');
                     set(h,'units','normalized','position',[.93,.45,.03,.1])
             end
 
