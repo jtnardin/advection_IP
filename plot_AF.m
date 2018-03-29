@@ -1,6 +1,6 @@
 clear all; clc
 
-for k = 2
+for k = 1
 
     for num_meth = 4
 
@@ -67,7 +67,7 @@ for k = 2
         %create grids for computaiton
         xnsize = [21,41,81,161,321,641,2*640+1];
 
-        c = distinguishable_colors(7);
+        c = distinguishable_colors(8);
 
         figure('units','normalized','outerposition',[0 0 1 1])
  
@@ -104,6 +104,8 @@ for k = 2
             D_J = zeros(7,1);
             E_J = zeros(7,1);
             F_J = zeros(7,1);
+            
+            G_J = zeros(7,1);
 
             for i = 1:7
                 q = q_ols{i,j,num_meth};
@@ -150,7 +152,6 @@ for k = 2
                 D_J(i) = 2/numel(Td)*sum(epsilon(:).*(u0(:)-u0theta_hat(:)));
                 E_J(i) = 2/numel(Td)*sum(epsilon(:).*(u0theta_hat(:)-uh(:)));
                 F_J(i) = 2/numel(Td)*sum((u0theta_hat(:)-uh(:)).*(u0(:) - u0theta_hat(:)));
-
             end
 
             J_final_abs = abs(A_J) + abs(B_J) + abs(C_J) + abs(D_J) + abs(E_J) + abs(F_J);
@@ -200,7 +201,7 @@ for k = 2
             loglog(h,abs(D_J),'.-','markersize',10)
             loglog(h,abs(E_J),'.-','markersize',10)
             loglog(h,abs(F_J),'.-','markersize',10)
-            
+                        
             text(h(end), J_final(end), 'J', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',8)
             text(h(end), A_J, 'A', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',8)
             text(h(end), B_J(end), 'B', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',8)
@@ -208,7 +209,7 @@ for k = 2
             text(h(end), abs(D_J(end)), 'D', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',8)
             text(h(end), abs(E_J(end)), 'E', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',8)
             text(h(end), abs(F_J(end)), 'F', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',8)
-            
+                        
             if j == 2
                     h=legend('J','A','B','C','D','E','F');
                     set(h,'units','normalized','position',[.93,.45,.03,.1])
