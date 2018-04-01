@@ -1,7 +1,7 @@
 %art_advec_fitting_f.m written 2-2-18 by JTN to fit numerical model to
 %artifical data from u_t+(g(x)u)_x=0.
 
-function [q_f,J_f] =  art_advec_fitting_f(xni,m,num_meth,IC_str)
+function [q_f,J_f] =  art_advec_fitting_f(xni,m,num_meth,IC_str,model_str,data_str)
 
     simnum = 5;
 
@@ -17,7 +17,7 @@ function [q_f,J_f] =  art_advec_fitting_f(xni,m,num_meth,IC_str)
 
 
     %load data
-    load(['advection_art_data' IC_str '.mat'])
+    load(data_str)
     q0=q0;
 
     xdi = ceil(m/length(eta));
@@ -82,13 +82,14 @@ function [q_f,J_f] =  art_advec_fitting_f(xni,m,num_meth,IC_str)
 %             tic
             [q_all{i},J_all(i)] = fmincon(@(q) MLE_cost_art_data(cell_data,...
                 q,dx,xn,x_int,xbd_0,xbd_1,dt,tn,IC,A,Abd,x,xdata,num_meth,...
-                t,tdata),q0_all{i},[],[],[],[],LB,UB,[],options);
+                t,tdata,model_str),q0_all{i},[],[],[],[],LB,UB,[],options);
 
 %             toc
     end
 
     q_f = q_all{J_all==min(J_all)};
     J_f = J_all(J_all==min(J_all));
+    
     
 %     save(['/scratch/summit/jona8898/chem_fitting/chem_fitting_art_data_xdn_'...
 %         num2str(xdi) '_xmn_' num2str(xni) '_sigma_' num2str(sigmaj)...
