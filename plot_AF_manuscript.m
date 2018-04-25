@@ -2,7 +2,7 @@ clear all; clc
 
 for k = 2
 
-    for num_meth = [1 3]
+    for num_meth = 3 %[1 3 ]
 
         
         if k == 1
@@ -193,22 +193,29 @@ for k = 2
 %             figure(fig_log)
             subplot(2,3,count)
             h = 1./(xnsize-1);
-            loglog(h,J_final,'.-','markersize',17,'linewidth',2)
+            p1 = loglog(h,J_final,'.-','markersize',30,'linewidth',3);
             hold on
-            loglog(h,abs(A_J*ones(7,1)),'.-','markersize',10)
-            loglog(h,abs(B_J),'.-','markersize',10)
-            loglog(h,abs(C_J),'.-','markersize',10)
-            loglog(h,abs(D_J),'.-','markersize',10)
-            loglog(h,abs(E_J),'.-','markersize',10)
-            loglog(h,abs(F_J),'.-','markersize',10)
+            p2 = loglog(h,abs(A_J*ones(7,1)),'.-','markersize',30,'linewidth',2.5);
+            p3 = loglog(h,abs(B_J),'.-','markersize',30,'linewidth',2.5);
+            p4 = loglog(h,abs(C_J),'.-','markersize',30,'linewidth',2.5);
+            p5 = loglog(h,abs(D_J),'.-','markersize',30,'linewidth',2.5);
+            p6 = loglog(h,abs(E_J),'.-','markersize',30,'linewidth',2.5);
+            p7 = loglog(h,abs(F_J),'.-','markersize',30,'linewidth',2.5);
                         
-            text(h(end), J_final(end), 'J', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',8)
-            text(h(end), A_J, 'A', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',8)
-            text(h(end), B_J(end), 'B', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',8)
-            text(h(end), C_J(end), 'C', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',8)
-            text(h(end), abs(D_J(end)), 'D', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',8)
-            text(h(end), abs(E_J(end)), 'E', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',8)
-            text(h(end), abs(F_J(end)), 'F', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',8)
+            
+            
+            [J_shifth,A_shifth,B_shifth,C_shifth,D_shifth,E_shifth,F_shifth,...
+                J_shiftv,A_shiftv,B_shiftv,C_shiftv,D_shiftv,E_shiftv,F_shiftv] = ...
+                shift_det_f(num_meth,count);
+            
+            
+            text(h(end)-2.5e-4-J_shifth, J_final(end)-J_shiftv, 'J', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',10,'color',p1.Color)
+            text(h(end)-2.5e-4-A_shifth, A_J-A_shiftv, 'A', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',10,'color',p2.Color)
+            text(h(end)-2.5e-4-B_shifth, B_J(end)-B_shiftv, 'B', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',10,'color',p3.Color)
+            text(h(end)-2.5e-4-C_shifth, C_J(end)-C_shiftv, 'C', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',10,'color',p4.Color)
+            text(h(end)-2.5e-4-D_shifth, abs(D_J(end))-D_shiftv, 'D', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',10,'color',p5.Color)
+            text(h(end)-2.5e-4-E_shifth, abs(E_J(end))-E_shiftv, 'E', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',10,'color',p6.Color)
+            text(h(end)-2.5e-4-F_shifth, abs(F_J(end))-F_shiftv, 'F', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',10,'color',p7.Color)
                         
             if j == 21
                     h=legend('J','A','B','C','D','E','F');
@@ -230,22 +237,24 @@ for k = 2
                     
             elseif strcmp(IC_str,'_front')
                 if num_meth == 1
-                    axis([10^-3.5 10^-1 10^-5 10^.5 ])
+                    axis([10^-3.75 10^-1 10^-5 10^.5 ])
                 elseif num_meth == 3 || num_meth == 4
-                    axis([10^-3.5 10^-1 10^-5 10^.5 ])
+                    axis([10^-3.75 10^-1 10^-6 10^.5 ])
                 end
             end
 
-        
+            xticks(10.^(-3:-1))
+            yticks(10.^(-5:0))
+            
             count = count + 1;
         end
 
-        annotation('textbox',[.425 .95 .2 .03],'string',['J components, '...
+        annotation('textbox',[.4 .99 .4 .03],'string',['J components, '...
             num_meth_short_cell{num_meth},' method'],'units','normalized','edgecolor','none','interpreter','latex')
         
         
         
-        exportfig(gcf,['J_comp' IC_str '_' num2str(num_meth) '_manuscript.eps'],'fontsize',1.5,'color','rgb')
+        exportfig(gcf,['J_comp' IC_str '_' num2str(num_meth) '_manuscript.eps'],'fontsize',2.5,'color','rgb')
         saveas(gcf,['J_comp' IC_str '_' num2str(num_meth) '_manuscript.fig'])
         
     end
