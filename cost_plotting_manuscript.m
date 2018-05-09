@@ -1,7 +1,7 @@
 clear all; clc
 
 
-IC_str = '_gauss';
+IC_str = '_front';
 
 
 %load best-fit params, data, and initial condition
@@ -71,66 +71,44 @@ end
 
 figure('units','normalized','outerposition',[0 0 1 1])
 
-
 markers = '.^sxv';
-markersize = [10 5 5 8 5];
+markersize = [20 10 10 15 10];
 
-
-for i = 1:numel(data)
+count = 1;
+for i = [1 2 4 8 9 11]
     
-    subplot(size(data,1),size(data,2),i)
+    subplot(2,3,count)
+    
 %     loglog(1./xnsize,J_ols(:,:,i))
-    
-    if strcmp(IC_str,'_gauss')
-%        loglog(1./xnsize,squeeze(J_ols(:,i,:)),'.-','linewidth',2,'markersize',17)
-       
-       markerct = 1;
 
-        for k = [1 2 3 4] 
-            loglog(1./xnsize,squeeze(J_ols(:,i,k)),[markers(markerct) '-'],'linewidth',1,'markersize',markersize(markerct))
-
-            if k == 1
-                hold on
-            end
-
-            markerct = markerct+1;
+    markerct = 1;
+    for k = [1 3 4 5] 
+        loglog(1./xnsize,squeeze(J_ols(:,i,k)),[markers(markerct) '-'],'linewidth',2,'markersize',markersize(markerct))
+        
+        if k == 1
+            hold on
         end
-    
-       
-    elseif strcmp(IC_str,'_front')
-%        loglog(1./xnsize,squeeze(J_ols(:,i,[1 3:5])),'.-','linewidth',2,'markersize',17)
-
-        markerct = 1;
-    
-        for k = [1 3 4 5] 
-            loglog(1./xnsize,squeeze(J_ols(:,i,k)),[markers(markerct) '-'],'linewidth',1,'markersize',markersize(markerct))
-
-            if k == 1
-                hold on
-            end
-
-            markerct = markerct+1;
-        end
-    
+        
+        markerct = markerct+1;
     end
     
-       
-      
+    
+    
     plot([1e-16 1],repmat(eta_str(i)^2,1,2),'k--') 
     
-    if i == numel(data)
+    if count == 3
         
-        h=legend(strcat('$N$ = ',num2str(xnstr'),', $\eta^2 = $',...
+        h=legend(strcat('$N$ = ',num2str(xnstr'),', $\eta^2 = $ ',...
             num2str(eta_str')),'location','northeast');
         
         if strcmp(IC_str,'_front')
             h=legend('Upwind','Lax-wendroff','Beam-Warming',...
                 'Upwind FL','$\eta^2$','location','southeast');
         elseif strcmp(IC_str,'_gauss')
-            h=legend('Upwind','Lax-wendroff','beam warming','upwind FL',...
+            h=legend('Upwind','Lax-Friedrichs','Lax-wendroff','beam warming',...
                 '$\eta^2$','location','northwest');
         end
-        set(h,'interpreter','latex','units','normalized','position',[.93 .7 .05 .15]);
+        set(h,'interpreter','latex','units','normalized','position',[.9 .6 .05 .15]);
         
     end
     
@@ -140,23 +118,29 @@ for i = 1:numel(data)
     
     if strcmp(IC_str,'_front')
 %         axis([1e-4 1e-1 1e-4 1e0])
-          axis([1e-4 1e-1 10^-(4) 10^.5])
+          axis([10^-3.5 1e-1 10^-(3.8) 10^-.4])
     elseif strcmp(IC_str,'_gauss')
-        axis([10^-3.5 10^-1 10^-8 10^-1])
+        axis([10^-3.5 10^-1.15 10^-10 1])
     end
 
 
-    title(['$N$ = ' num2str(xnstr(i)) ', $\eta^2 = $ ' ...
+    title(['$N$ = ' num2str(xnstr(i)) ', $\eta^2 = $ ',...
             num2str(eta_str(i)^2)],'interpreter','latex')
 
     xlabel('$h$','interpreter','latex')
     ylabel('$J(h,\hat{\theta})$','interpreter','latex')
+    
+    xticks(10.^[-3:-2])
+    yticks(10.^[-3:0])
+
+    
+    count = count+1;
 
 end
 
 
-exportfig(gcf,['J_h_plot' IC_str '.eps'],'fontsize',1.5,'color','rgb')
-saveas(gcf,['J_h_plot' IC_str '.fig'])
+exportfig(gcf,['J_h_plot' IC_str '_manuscript.eps'],'fontsize',2.5,'color','rgb')
+saveas(gcf,['J_h_plot' IC_str '_manuscript.fig'])
 
 
 q_norm = zeros(size(q_ols));
@@ -190,57 +174,51 @@ if strcmp(IC_str,'_front')
 end
 
 figure('units','normalized','outerposition',[0 0 1 1])
-for i = 1:numel(data)
+count = 1;
+for i = [1 2 4 8 9 11]
     
-    subplot(size(data,1),size(data,2),i)
-    if strcmp(IC_str,'_gauss')
-        markerct = 1;
-        for k = [1 2 3 4] 
-            loglog(1./xnsize,squeeze(q_norm(:,i,k)),[markers(markerct) '-'],'linewidth',1,'markersize',markersize(markerct))
-
-            if k == 1
-                hold on
-            end
-
-            markerct = markerct+1;
+    subplot(2,3,count)
+%     loglog(1./xnsize,squeeze(q_norm(:,i,[1 3 4 5])),'.-','linewidth',3,'markersize',30)
+%     hold on
+%     if strcmp(IC_str,'_front')
+%         loglog(1./xnsize,squeeze(q_norma(:,i,1)),'.-','linewidth',3,'markersize',30)
+%     end
+    
+    markerct = 1;
+    for k = [1 3 4 5] 
+        loglog(1./xnsize,squeeze(q_norm(:,i,k)),[markers(markerct) '-'],'linewidth',2,'markersize',markersize(markerct))
+        
+        if k == 1
+            hold on
         end
-    elseif strcmp(IC_str,'_front')
-        markerct = 1;
-        for k = [1 3 4 5] 
-            loglog(1./xnsize,squeeze(q_norm(:,i,k)),[markers(markerct) '-'],'linewidth',1,'markersize',markersize(markerct))
-
-            if k == 1
-                hold on
-            end
-
-            markerct = markerct+1;
-        end
+        
+        markerct = markerct+1;
     end
-    hold on
     if strcmp(IC_str,'_front')
-        loglog(1./xnsize,squeeze(q_norma(:,i,1)),[markers(markerct) '-'],'linewidth',1,'markersize',markersize(markerct))
+        loglog(1./xnsize,squeeze(q_norma(:,i,1)),[markers(markerct) '-'],'linewidth',2,'markersize',markersize(markerct))
     end
+
     
-    if i == 1
+    if count == 3
         
 %         h=legend(strcat('$N$ = ',num2str(xnstr'),', $\eta^2 = $',...
 %             num2str(eta_str')),'location','northeast');
 
-    if strcmp(IC_str,'_front')
-        h=legend('Upwind','Lax-wendroff','Beam-Warming',...
-            'Upwind FL','Upwind auto');
-    elseif strcmp(IC_str,'_gauss')
-        h=legend('Upwind','Lax-wendroff','beam warming','upwind FL');
-    end
+        if strcmp(IC_str,'_front')
+            h=legend('Upwind','Lax-wendroff','Beam-Warming',...
+                'Upwind FL','Upwind auto');
+        elseif strcmp(IC_str,'_gauss')
+            h=legend('Upwind','Lax-wendroff','beam warming');
+        end
 
-        set(h,'interpreter','latex','units','normalized','position',[.93 .6 .05 .15]);
+        set(h,'interpreter','latex','units','normalized','position',[.9 .55 .05 .15]);
         
     end
     
     if strcmp(IC_str,'_front')
-        axis([10^-4 10^-1 10^-3.1 10^1])
+        axis([10^-3.5 10^-1 10^-3.1 10^.7])
     elseif strcmp(IC_str,'_gauss')
-        axis([10^-3.5 10^-1.15 10^-5.5 10])
+        axis([10^-3.5 10^-1.15 10^-5 10])
     end
     
 %     title(['$\| \hat{\theta} - \theta_0 \|_2$, ' num_meth_cell{i}],'interpreter','latex')
@@ -252,11 +230,18 @@ for i = 1:numel(data)
     
     xlabel('$h$','interpreter','latex')
     ylabel('$\| \theta_0 - \hat{\theta} \|_2$','interpreter','latex')
+    
+    
+    xticks(10.^[-3:-2])
+    yticks(10.^[-2:0])
 
+
+    count = count + 1;
     
 end
+uistack(h,'top')
 
 
-exportfig(gcf,['q_h_plot' IC_str '.eps'],'fontsize',1.5,'color','rgb')
-saveas(gcf,['q_h_plot' IC_str '.fig'])
+exportfig(gcf,['q_h_plot' IC_str '_manuscript.eps'],'fontsize',2.5,'color','rgb')
+saveas(gcf,['q_h_plot' IC_str '_manuscript.fig'])
 
