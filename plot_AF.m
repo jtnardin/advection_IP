@@ -1,10 +1,10 @@
 clear all; clc
 
 markers = '.^sxv*d';
-markersize = [15 5 5 5 5 5 5];
+markersize = [20 7*ones(1,6)];
 
 
-for k = 1
+for k = 1:2
 
     if k == 1
         num_array = 1:4;
@@ -42,7 +42,7 @@ for k = 1
     end
 
     
-    for num_meth = 1
+    for num_meth = num_array
 
         
         if k == 1
@@ -57,8 +57,8 @@ for k = 1
         clear eta eta_vec
         %load best-fit params, data, and initial condition
         if strcmp(IC_str,'_gauss')
-            load(['advection_rates' IC_str '_IC_all.mat'])
-            load(['advection_art_data' IC_str '_all.mat'])
+            load(['advection_rates' IC_str '_IC_all_3_26.mat'])
+            load(['advection_art_data' IC_str '_all_3_26.mat'])
         elseif strcmp(IC_str,'_front')
             load(['advection_rates_autoreg' IC_str '_IC_all.mat'])
             load(['advection_art_data' IC_str '_all.mat'])
@@ -119,8 +119,12 @@ for k = 1
 
             u0 = u0';
 
-            epsilon = data{xdi,sigmaj}(2:end,:)-u0;
-
+            if mod(j,length(eta)) ~= 1
+                epsilon = data{xdi,sigmaj}(2:end,:)-u0;
+            else
+                epsilon = zeros(size(u0));
+            end
+            
             A_J = 1/(numel(Td))*sum(epsilon(:).^2);
             B_J = zeros(7,1);
             C_J = zeros(7,1);
@@ -177,6 +181,7 @@ for k = 1
                 F_J(i) = 2/numel(Td)*sum((u0theta_hat(:)-uh(:)).*(u0(:) - u0theta_hat(:)));
             end
 
+           
             J_final_abs = abs(A_J) + abs(B_J) + abs(C_J) + abs(D_J) + abs(E_J) + abs(F_J);
             J_final = A_J + B_J + C_J + D_J + E_J + F_J;
 
@@ -209,10 +214,19 @@ for k = 1
             end
 
             
-              title(strcat('$N$ = ',num2str(xndata(xdi)),', $\eta^2 = $',...
-                num2str(eta_vec(sigmaj)^2)),'interpreter','latex')
-
-            xlabel('$\log(h)$','interpreter','latex')
+            if j <= length(eta)
+              title(['$\mathbf{\eta^2 = ',sprintf('%1.e',eta_vec(sigmaj)^2) '}$'],...
+                  'interpreter','latex','fontsize',15)
+            end
+            
+            if mod(j,length(eta)) == 1
+                ylabel(['$\mathbf{N = ' num2str(xndata(xdi)) '}$'],'interpreter',...
+                    'latex','fontsize',15)
+            end
+            
+            
+            xlabel('$h$','interpreter','latex')
+            xticks([10^-3 10^-2])
             
             if strcmp(IC_str,'_gauss')
                 if num_meth == 1
@@ -236,8 +250,10 @@ for k = 1
             num_meth_short_cell{num_meth},' method'],'units','normalized','edgecolor','none','interpreter','latex')
         
         
-% %         exportfig(gcf,['J_comp' IC_str '_' num2str(num_meth) '.eps'],'fontsize',1.5,'color','rgb')
-% %         saveas(gcf,['J_comp' IC_str '_' num2str(num_meth) '.fig'])
+        exportfig(gcf,['J_comp' IC_str '_' num2str(num_meth) '.eps'],'fontsize',1.5,'color','rgb')
+        saveas(gcf,['J_comp' IC_str '_' num2str(num_meth) '.fig'])
+        
+        close(gcf)
         
     end
 end

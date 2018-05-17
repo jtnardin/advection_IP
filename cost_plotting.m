@@ -73,7 +73,7 @@ figure('units','normalized','outerposition',[0 0 1 1])
 
 
 markers = '.^sxv';
-markersize = [10 5 5 8 5];
+markersize = [15 8 8 8 8];
 
 
 for i = 1:numel(data)
@@ -130,11 +130,10 @@ for i = 1:numel(data)
             h=legend('Upwind','Lax-wendroff','beam warming','upwind FL',...
                 '$\eta^2$','location','northwest');
         end
-        set(h,'interpreter','latex','units','normalized','position',[.93 .7 .05 .15]);
+        set(h,'interpreter','latex','units','normalized','position',[.9 .7 .05 .15]);
         
     end
     
-%     title(['J, ' num_meth_cell{i}])
 
        
     
@@ -146,11 +145,18 @@ for i = 1:numel(data)
     end
 
 
-    title(['$N$ = ' num2str(xnstr(i)) ', $\eta^2 = $ ' ...
-            num2str(eta_str(i)^2)],'interpreter','latex')
-
+    if i <= length(eta)
+          title(['$\mathbf{\eta^2 = ',sprintf('%1.e',eta_str(i)^2) '}$'],...
+              'interpreter','latex','fontsize',15)
+    end
+            
+    if mod(i,length(eta)) == 1
+        ylabel(['$\mathbf{N = ' num2str(xnstr(i)) '}$'],'interpreter',...
+            'latex','fontsize',15)
+    end
+    
     xlabel('$h$','interpreter','latex')
-    ylabel('$J(h,\hat{\theta})$','interpreter','latex')
+    xticks([10^-3 10^-2])
 
 end
 
@@ -227,13 +233,13 @@ for i = 1:numel(data)
 %             num2str(eta_str')),'location','northeast');
 
     if strcmp(IC_str,'_front')
-        h=legend('Upwind','Lax-wendroff','Beam-Warming',...
+        L=legend('Upwind','Lax-wendroff','Beam-Warming',...
             'Upwind FL','Upwind auto');
     elseif strcmp(IC_str,'_gauss')
-        h=legend('Upwind','Lax-wendroff','beam warming','upwind FL');
+        L=legend('Upwind','Lax-wendroff','beam warming','upwind FL');
     end
 
-        set(h,'interpreter','latex','units','normalized','position',[.93 .6 .05 .15]);
+        set(L,'interpreter','latex','units','normalized','position',[.92 .6 .05 .15]);
         
     end
     
@@ -243,16 +249,22 @@ for i = 1:numel(data)
         axis([10^-3.5 10^-1.15 10^-5.5 10])
     end
     
-%     title(['$\| \hat{\theta} - \theta_0 \|_2$, ' num_meth_cell{i}],'interpreter','latex')
+    if i <= length(eta)
+              title(['$\mathbf{\eta^2 = ',sprintf('%1.e',eta_str(i)^2) '}$'],...
+                  'interpreter','latex','fontsize',15)
+    end
+            
+    if mod(i,length(eta)) == 1
+        ylabel(['$\mathbf{N = ' num2str(num2str(xnstr(i))) '}$'],'interpreter',...
+            'latex','fontsize',15)
+    end
+            
     
-
-
-    title(['$N$ = ' num2str(xnstr(i)) ', $\eta^2 = $ ',...
-            num2str(eta_str(i)^2)],'interpreter','latex')
     
     xlabel('$h$','interpreter','latex')
-    ylabel('$\| \theta_0 - \hat{\theta} \|_2$','interpreter','latex')
-
+    %ylabel('$\| \theta_0 - \hat{\theta} \|_2$','interpreter','latex')
+    xticks([10^-3 10^-2])
+    
     
 end
 
