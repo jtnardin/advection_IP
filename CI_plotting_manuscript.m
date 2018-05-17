@@ -1,7 +1,7 @@
 clear all; clc
 
 IC_str = '_front';
-stat_meth = '_OLS';
+stat_meth = '_autor';
 
 load(['CI' IC_str stat_meth '_all.mat'])
 load(['advection_art_data' IC_str '_all.mat'])
@@ -53,7 +53,7 @@ end
 
 
 
-for j = 4
+for j = [1]% 4]
 
     figure('units','normalized','outerposition',[0 0 1 1])
     
@@ -65,7 +65,7 @@ for j = 4
         subplot(2,3,count)
         hold on
 %         plot(log2(q0(1)),log2(q0(2)),'k*')
-        plot(q0(1),q0(2),'k*')
+        plot(q0(1),q0(2),'k*','markersize',15)
 
 
 
@@ -79,16 +79,19 @@ for j = 4
             end
         end
 
-        xlabel('$\log_2(\alpha)$','interpreter','latex')
-        ylabel('$\log_2(\beta)$','interpreter','latex')
+        xlabel('$\alpha$','interpreter','latex')
+        ylabel('$\beta$','interpreter','latex')
 
-        title({strcat('95\% CI,  ',num_meth_short_cell{j},' method') ; strcat(' $N$ = ',num2str(xnstr(i)),', $\eta^2 = $',...
-                num2str(eta_str(i)^2))},'interpreter','latex')
+        title({['95\% CI, ',num_meth_short_cell{j} ' method'] ; [' $N$ = ' num2str(xnstr(i)) ', $\eta^2 = $ ' ...
+                num2str(eta_str(i)^2)]},'interpreter','latex')
 
         if strcmp(IC_str,'_front')
             if j == 1
-%                 axis([-3.5 -1 -2 -.2])
-                axis([.1 .9 0.35 0.7])
+                if strcmp(stat_meth,'_OLS')
+                    axis([.05 .4 0.45 0.7])
+                elseif strcmp(stat_meth,'_autor')
+                    axis([.05 .5 0.4 0.7])
+                end
             elseif j == 3
 %                 axis([-2.5 .5 -1.7 -.7])
                 axis([0 1 0.2 .6])
@@ -124,6 +127,26 @@ for j = 4
             end
         end
         
+        ax = gca;
+        ticks_curr = ax.XTick;
+        xticks(ticks_curr(1:2:end))
+        
+        if strcmp(IC_str,'_front')
+            if j == 1
+                if strcmp(stat_meth,'_OLS')
+                    yticks(.45:.1:.65)
+                elseif strcmp(stat_meth,'_autor')
+                    yticks(.45:.1:.65)
+                end 
+            elseif j == 4
+                if strcmp(stat_meth,'_OLS')
+                    yticks(.4:.1:.6)
+                end
+            end
+            
+        
+        end
+        
         count = count+1;
         
     end
@@ -136,14 +159,14 @@ for j = 4
     ax = axes('Position',[0 0 1 1],'visible','off');
     axes(ax)
 
-    a=text(.9325,.62,'$h$','units','normalized','interpreter','latex');
-    text(.94,.59,'$(10\cdot2^0)^{-1}$','units','normalized','interpreter','latex')
-    text(.94,.525,'$(10\cdot2^3)^{-1}$','units','normalized','interpreter','latex')
-    text(.94,.46,'$(10\cdot2^6)^-1$','units','normalized','interpreter','latex')
+    a=text(.93,.62,'$h$','units','normalized','interpreter','latex');
+    text(.95,.59,'$(10\cdot2^0)^{-1}$','units','normalized','interpreter','latex')
+    text(.95,.525,'$(10\cdot2^3)^{-1}$','units','normalized','interpreter','latex')
+    text(.95,.46,'$(10\cdot2^6)^{-1}$','units','normalized','interpreter','latex')
 
     
     
-    exportfig(gcf,['CI_h_plot' IC_str '_' num2str(j) stat_meth '_manuscript.eps'],'fontsize',1.15,'color','rgb')
+    exportfig(gcf,['CI_h_plot' IC_str '_' num2str(j) stat_meth '_manuscript.eps'],'fontsize',2.5,'color','rgb')
     saveas(gcf,['CI_h_plot' IC_str '_' num2str(j) stat_meth '_manuscript.fig'])
 
     

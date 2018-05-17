@@ -1,8 +1,48 @@
 clear all; clc
 
+markers = '.^sxv*d';
+markersize = [15 5 5 5 5 5 5];
+
+
 for k = 1
 
-    for num_meth = 4
+    if k == 1
+        num_array = 1:4;
+        
+        num_meth_cell = cell(5,1);
+        num_meth_cell{1} = 'upwind';
+        num_meth_cell{2} = 'laxwend';
+        num_meth_cell{3} = 'beamwarm';
+        num_meth_cell{4} = 'upwindfl';
+
+
+        num_meth_short_cell = cell(5,1);
+        num_meth_short_cell{1} = 'Upwind';
+        num_meth_short_cell{2} = 'Lax-Wendroff';
+        num_meth_short_cell{3} = 'Beam-Warming';
+        num_meth_short_cell{4} = 'Upwind w/ flux limiters';
+
+    elseif k == 2
+        num_array = [1 3 4 5];
+        
+        num_meth_cell = cell(5,1);
+        num_meth_cell{1} = 'upwind';
+        num_meth_cell{2} = 'laxfried';
+        num_meth_cell{3} = 'laxwend';
+        num_meth_cell{4} = 'beamwarm';
+        num_meth_cell{5} = 'upwindfl';
+
+
+        num_meth_short_cell = cell(5,1);
+        num_meth_short_cell{1} = 'Upwind';
+        num_meth_short_cell{2} = 'Lax-Friedrichs';
+        num_meth_short_cell{3} = 'Lax-Wendroff';
+        num_meth_short_cell{4} = 'Beam-Warming';
+        num_meth_short_cell{5} = 'Upwind w/ flux limiters';
+    end
+
+    
+    for num_meth = 1
 
         
         if k == 1
@@ -35,23 +75,6 @@ for k = 1
 
 
         xnsize = [21,41,81,161,321,641,2*640+1];
-
-
-        num_meth_cell = cell(5,1);
-        num_meth_cell{1} = 'upwind';
-        num_meth_cell{2} = 'laxfried';
-        num_meth_cell{3} = 'laxwend';
-        num_meth_cell{4} = 'beamwarm';
-        num_meth_cell{5} = 'upwindfl';
-
-
-        num_meth_short_cell = cell(5,1);
-        num_meth_short_cell{1} = 'Upwind';
-        num_meth_short_cell{2} = 'Lax-Friedrichs';
-        num_meth_short_cell{3} = 'Lax-Wendroff';
-        num_meth_short_cell{4} = 'Beam-Warming';
-        num_meth_short_cell{5} = 'Upwind w/ flux limiters';
-
 
 
         for i = 1:length(xd)
@@ -157,60 +180,30 @@ for k = 1
             J_final_abs = abs(A_J) + abs(B_J) + abs(C_J) + abs(D_J) + abs(E_J) + abs(F_J);
             J_final = A_J + B_J + C_J + D_J + E_J + F_J;
 
-%             figure(fig_area)
-%             if sigmaj == 1
-%                 subplot(length(xndata),length(eta),j)
-%         %         semilogx(1./(xnsize-1),B_J,'color',c(2,:))
-%         %         hold on
-%         %         semilogx(1./(xnsize-1),C_J,'color',c(3,:))
-%         %         semilogx(1./(xnsize-1),F_J,'color',c(6,:))
-%         %         semilogx(1./(xnsize-1),J_final,'linewidth',3,'color',c(7,:))
-%                 area(log(1./(xnsize-1)),abs([A_J*ones(7,1) B_J C_J D_J E_J F_J])./J_final_abs)
-%             else
-%                 subplot(length(xndata),length(eta),j)
-%         %         semilogx(1./(xnsize-1),A_J*ones(length(xnsize),1)+D_J+E_J,'color',c(1,:))
-%         %         hold on
-%         %         semilogx(1./(xnsize-1),B_J+C_J+F_J,'color',c(2,:))
-%         % %         semilogx(1./(xnsize-1),C_J,'color',c(3,:))
-%         % %         semilogx(1./(xnsize-1),D_J,'color',c(4,:))
-%         % %         semilogx(1./(xnsize-1),E_J,'color',c(5,:))
-%         % %         semilogx(1./(xnsize-1),F_J,'color',c(6,:))
-%         %         
-%         %         semilogx(1./(xnsize-1),J_final,'linewidth',3,'color',c(7,:))
-% 
-%                 area(log(1./(xnsize-1)),abs([A_J*ones(7,1) B_J C_J D_J E_J F_J])./J_final_abs)
-% 
-%                 if j == 2
-%                     h=legend('A','B','C','D','E','F');
-%                     set(h,'units','normalized','position',[.93,.45,.03,.1])
-%                 end
-% 
-% 
-%             end
 
           
 
 %             figure(fig_log)
-            subplot(length(xndata),length(eta),j)
+            subplot(length(xd),length(eta),j)
             h = 1./(xnsize-1);
-            loglog(h,J_final,'.-','markersize',17,'linewidth',2)
+            p1 = loglog(h,J_final,[markers(1) '-'],'markersize',markersize(1),'linewidth',3);
             hold on
-            loglog(h,abs(A_J*ones(7,1)),'.-','markersize',10)
-            loglog(h,abs(B_J),'.-','markersize',10)
-            loglog(h,abs(C_J),'.-','markersize',10)
-            loglog(h,abs(D_J),'.-','markersize',10)
-            loglog(h,abs(E_J),'.-','markersize',10)
-            loglog(h,abs(F_J),'.-','markersize',10)
+            p2 = loglog(h,abs(A_J*ones(7,1)),[markers(2) '-'],'markersize',markersize(2),'linewidth',1);
+            p3 = loglog(h,abs(B_J),[markers(3) '-'],'markersize',markersize(3),'linewidth',1);
+            p4 = loglog(h,abs(C_J),[markers(4) '-'],'markersize',markersize(4),'linewidth',1);
+            p5 = loglog(h,abs(D_J),[markers(5) '-'],'markersize',markersize(5),'linewidth',1);
+            p6 = loglog(h,abs(E_J),[markers(6) '-'],'markersize',markersize(6),'linewidth',1);
+            p7 = loglog(h,abs(F_J),[markers(7) '-'],'markersize',markersize(7),'linewidth',1);
                         
-            text(h(end), J_final(end), 'J', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',8)
-            text(h(end), A_J, 'A', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',8)
-            text(h(end), B_J(end), 'B', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',8)
-            text(h(end), C_J(end), 'C', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',8)
-            text(h(end), abs(D_J(end)), 'D', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',8)
-            text(h(end), abs(E_J(end)), 'E', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',8)
-            text(h(end), abs(F_J(end)), 'F', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',8)
+%             text(h(end), J_final(end), 'J', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',8)
+%             text(h(end), A_J, 'A', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',8)
+%             text(h(end), B_J(end), 'B', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',8)
+%             text(h(end), C_J(end), 'C', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',8)
+%             text(h(end), abs(D_J(end)), 'D', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',8)
+%             text(h(end), abs(E_J(end)), 'E', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',8)
+%             text(h(end), abs(F_J(end)), 'F', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',8)
                         
-            if j == 2
+            if j == length(eta)
                     h=legend('J','A','B','C','D','E','F');
                     set(h,'units','normalized','position',[.93,.45,.03,.1])
             end
@@ -243,8 +236,8 @@ for k = 1
             num_meth_short_cell{num_meth},' method'],'units','normalized','edgecolor','none','interpreter','latex')
         
         
-%         exportfig(gcf,['J_comp' IC_str '_' num2str(num_meth) '.eps'],'fontsize',1.5,'color','rgb')
-%         saveas(gcf,['J_comp' IC_str '_' num2str(num_meth) '.fig'])
+% %         exportfig(gcf,['J_comp' IC_str '_' num2str(num_meth) '.eps'],'fontsize',1.5,'color','rgb')
+% %         saveas(gcf,['J_comp' IC_str '_' num2str(num_meth) '.fig'])
         
     end
 end

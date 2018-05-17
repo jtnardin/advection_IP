@@ -67,12 +67,16 @@ for k = 2
         %create grids for computaiton
         xnsize = [21,41,81,161,321,641,2*640+1];
 
-        c = distinguishable_colors(8);
-
         figure('units','normalized','outerposition',[0 0 1 1])
  
+        
+        markers = '.^sxv*d';
+        markersize = [25 10 10 15 10 10 10];
+
+        
         count = 1;
-        for j = [1 4 7 15 18 21]
+        
+        for j = [1 2 4 8 9 11]%[1 4 7 15 18 21]
 
             xdi = ceil(j/length(eta_vec));
             sigmaj = mod(j,length(eta_vec));
@@ -157,50 +161,20 @@ for k = 2
             J_final_abs = abs(A_J) + abs(B_J) + abs(C_J) + abs(D_J) + abs(E_J) + abs(F_J);
             J_final = A_J + B_J + C_J + D_J + E_J + F_J;
 
-%             figure(fig_area)
-%             if sigmaj == 1
-%                 subplot(length(xndata),length(eta),j)
-%         %         semilogx(1./(xnsize-1),B_J,'color',c(2,:))
-%         %         hold on
-%         %         semilogx(1./(xnsize-1),C_J,'color',c(3,:))
-%         %         semilogx(1./(xnsize-1),F_J,'color',c(6,:))
-%         %         semilogx(1./(xnsize-1),J_final,'linewidth',3,'color',c(7,:))
-%                 area(log(1./(xnsize-1)),abs([A_J*ones(7,1) B_J C_J D_J E_J F_J])./J_final_abs)
-%             else
-%                 subplot(length(xndata),length(eta),j)
-%         %         semilogx(1./(xnsize-1),A_J*ones(length(xnsize),1)+D_J+E_J,'color',c(1,:))
-%         %         hold on
-%         %         semilogx(1./(xnsize-1),B_J+C_J+F_J,'color',c(2,:))
-%         % %         semilogx(1./(xnsize-1),C_J,'color',c(3,:))
-%         % %         semilogx(1./(xnsize-1),D_J,'color',c(4,:))
-%         % %         semilogx(1./(xnsize-1),E_J,'color',c(5,:))
-%         % %         semilogx(1./(xnsize-1),F_J,'color',c(6,:))
-%         %         
-%         %         semilogx(1./(xnsize-1),J_final,'linewidth',3,'color',c(7,:))
-% 
-%                 area(log(1./(xnsize-1)),abs([A_J*ones(7,1) B_J C_J D_J E_J F_J])./J_final_abs)
-% 
-%                 if j == 2
-%                     h=legend('A','B','C','D','E','F');
-%                     set(h,'units','normalized','position',[.93,.45,.03,.1])
-%                 end
-% 
-% 
-%             end
 
           
 
 %             figure(fig_log)
             subplot(2,3,count)
             h = 1./(xnsize-1);
-            p1 = loglog(h,J_final,'.-','markersize',30,'linewidth',3);
+            p1 = loglog(h,J_final,[markers(1) '-'],'markersize',markersize(1),'linewidth',3);
             hold on
-            p2 = loglog(h,abs(A_J*ones(7,1)),'.-','markersize',30,'linewidth',2.5);
-            p3 = loglog(h,abs(B_J),'.-','markersize',30,'linewidth',2.5);
-            p4 = loglog(h,abs(C_J),'.-','markersize',30,'linewidth',2.5);
-            p5 = loglog(h,abs(D_J),'.-','markersize',30,'linewidth',2.5);
-            p6 = loglog(h,abs(E_J),'.-','markersize',30,'linewidth',2.5);
-            p7 = loglog(h,abs(F_J),'.-','markersize',30,'linewidth',2.5);
+            p2 = loglog(h,abs(A_J*ones(7,1)),[markers(2) '-'],'markersize',markersize(2),'linewidth',2.5);
+            p3 = loglog(h,abs(B_J),[markers(3) '-'],'markersize',markersize(3),'linewidth',2.5);
+            p4 = loglog(h,abs(C_J),[markers(4) '-'],'markersize',markersize(4),'linewidth',2.5);
+            p5 = loglog(h,abs(D_J),[markers(5) '-'],'markersize',markersize(5),'linewidth',2.5);
+            p6 = loglog(h,abs(E_J),[markers(6) '-'],'markersize',markersize(6),'linewidth',2.5);
+            p7 = loglog(h,abs(F_J),[markers(7) '-'],'markersize',markersize(7),'linewidth',2.5);
                         
             
             
@@ -217,14 +191,14 @@ for k = 2
             text(h(end)-2.5e-4-E_shifth, abs(E_J(end))-E_shiftv, 'E', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',10,'color',p6.Color)
             text(h(end)-2.5e-4-F_shifth, abs(F_J(end))-F_shiftv, 'F', 'HorizontalAlignment','center', 'VerticalAlignment','middle','fontsize',10,'color',p7.Color)
                         
-            if j == 21
+            if count == 3
                     h=legend('J','A','B','C','D','E','F');
                     set(h,'units','normalized','position',[.93,.45,.03,.1])
             end
 
             
-              title(strcat('$N$ = ',num2str(xndata(xdi)),', $\eta^2 = $',...
-                num2str(eta_vec(sigmaj)^2)),'interpreter','latex')
+              title(['$N$ = ',num2str(xndata(xdi)) ', $\eta^2 =$ ' ...
+                num2str(eta_vec(sigmaj)^2)],'interpreter','latex')
 
             xlabel('$\log(h)$','interpreter','latex')
             
