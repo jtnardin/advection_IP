@@ -1,7 +1,7 @@
 %art_advec_fitting_f.m written 2-2-18 by JTN to fit numerical model to
 %artifical data from u_t+(g(x)u)_x=0.
 
-function [q_f,J_f] =  art_advec_fitting_f(xni,m,num_meth,IC_str,model_str,data_str)
+function [q_f,J_f,num_it] =  art_advec_fitting_f(xni,m,num_meth,IC_str,model_str,data_str)
 
     simnum = 5;
 
@@ -61,6 +61,7 @@ function [q_f,J_f] =  art_advec_fitting_f(xni,m,num_meth,IC_str,model_str,data_s
 
     %%%% Now fit to migration data. First initialize q and cost vectors
     q_all = cell(simnum,1);
+    output_all = cell(simnum,1);
     q0_all = cell(simnum,1);
     J_all = zeros(simnum,1);
 
@@ -80,7 +81,7 @@ function [q_f,J_f] =  art_advec_fitting_f(xni,m,num_meth,IC_str,model_str,data_s
             
 
 %             tic
-            [q_all{i},J_all(i)] = fmincon(@(q) MLE_cost_art_data(cell_data,...
+            [q_all{i},J_all(i),~,output_all{i}] = fmincon(@(q) MLE_cost_art_data(cell_data,...
                 q,dx,xn,x_int,xbd_0,xbd_1,dt,tn,IC,A,Abd,x,xdata,num_meth,...
                 t,tdata,model_str),q0_all{i},[],[],[],[],LB,UB,[],options);
 
@@ -89,7 +90,7 @@ function [q_f,J_f] =  art_advec_fitting_f(xni,m,num_meth,IC_str,model_str,data_s
 
     q_f = q_all{J_all==min(J_all)};
     J_f = J_all(J_all==min(J_all));
-    
+    num_it = output_all{J_all==min(J_all)}.funcCount;
     
 %     save(['/scratch/summit/jona8898/chem_fitting/chem_fitting_art_data_xdn_'...
 %         num2str(xdi) '_xmn_' num2str(xni) '_sigma_' num2str(sigmaj)...
