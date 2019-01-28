@@ -1,7 +1,7 @@
 clear all; clc
 
 IC_str = '_front';
-stat_meth = '_autor';
+stat_meth = '_OLS';
 
 load(['CI' IC_str stat_meth '_all.mat'])
 load(['advection_art_data' IC_str '_all.mat'])
@@ -55,17 +55,17 @@ end
 
 for j = [1]% 4]
 
-    figure('units','normalized','outerposition',[0 0 1 1])
+    figure%('units','normalized','outerposition',[0 0 1 1])
     
     count = 1;
     
-    for i = [1 4 6 8 11 13]
+    for i = 4%[1 4 6 8 11 13]
 
         
-        subplot(2,3,count)
+     %   subplot(2,3,count)
         hold on
 %         plot(log2(q0(1)),log2(q0(2)),'k*')
-        plot(q0(1),q0(2),'k*','markersize',15)
+        
 
 
 
@@ -75,15 +75,17 @@ for j = [1]% 4]
 %                 rectangle('position',[log2(C(1,1)) log2(C(2,1)) log2(C(1,2))-log2(C(1,1)) log2(C(2,2))-log2(C(2,1))],...
 %                     'edgecolor',[(l-0)/7 0 1-(l-0)/7])%repmat(1-(l+1)/8,1,3))
                    rectangle('position',[C(1,1) C(2,1) C(1,2)-C(1,1) C(2,2)-C(2,1)],...
-                     'edgecolor',[(l-0)/7 0 1-(l-0)/7])%repmat(1-(l+1)/8,1,3))
+                     'edgecolor',[(l-0)/7 0 1-(l-0)/7],'linewidth',1)%repmat(1-(l+1)/8,1,3))
             end
         end
+        
+        plot(q0(1),q0(2),'kx','markersize',20)
 
         xlabel('$\alpha$','interpreter','latex')
         ylabel('$\beta$','interpreter','latex')
 
-        title({['95\% CI, ',num_meth_short_cell{j} ' method'] ; [' $N$ = ' num2str(xnstr(i)) ', $\eta^2 = $ ' ...
-                num2str(eta_str(i)^2)]},'interpreter','latex')
+%         title({['95\% CI, ',num_meth_short_cell{j} ' method'] ; [' $N$ = ' num2str(xnstr(i)) ', $\eta^2 = $ ' ...
+%                 num2str(eta_str(i)^2)]},'interpreter','latex')
 
         if strcmp(IC_str,'_front')
             if j == 1
@@ -129,8 +131,14 @@ for j = [1]% 4]
         
         ax = gca;
         ticks_curr = ax.XTick;
-        xticks(ticks_curr(1:2:end))
-        
+        if strcmp(stat_meth,'_OLS')
+            title('OLS Confidence Intervals','interpreter','latex')
+            xticks(ticks_curr(1:2:end))
+        elseif strcmp(stat_meth,'_autor')
+            title('Autocorrelative Confidence Intervals','interpreter','latex')
+            xticks(ticks_curr(1:4:end))
+        end
+            
         if strcmp(IC_str,'_front')
             if j == 1
                 if strcmp(stat_meth,'_OLS')
@@ -152,21 +160,21 @@ for j = [1]% 4]
     end
     
     caxis([1/xnsize(end) 1/xnsize(1)])
-    c=colorbar('units','normalized','position',[.93 .45 .01 .15]);
+    c=colorbar('units','normalized','position',[.85 .4 .05 .25]);
     xns = length(xnsize);
     set(c,'colormap',[1-(1/(xns):(1/(xns)):1)' zeros(xns,1) (1/(xns):1/(xns):1)'])
     set(c,'ticks',[]);
     ax = axes('Position',[0 0 1 1],'visible','off');
     axes(ax)
 
-    a=text(.93,.62,'$h$','units','normalized','interpreter','latex');
-    text(.95,.59,'$(10\cdot2^0)^{-1}$','units','normalized','interpreter','latex')
-    text(.95,.525,'$(10\cdot2^3)^{-1}$','units','normalized','interpreter','latex')
-    text(.95,.46,'$(10\cdot2^6)^{-1}$','units','normalized','interpreter','latex')
+    a=text(.86,.68,'$h$','units','normalized','interpreter','latex');
+    text(.91,.63,'$(10\cdot2^0)^{-1}$','units','normalized','interpreter','latex')
+    text(.91,.525,'$(10\cdot2^3)^{-1}$','units','normalized','interpreter','latex')
+    text(.91,.42,'$(10\cdot2^6)^{-1}$','units','normalized','interpreter','latex')
 
     
     
-    exportfig(gcf,['CI_h_plot' IC_str '_' num2str(j) stat_meth '_manuscript.eps'],'fontsize',2.5,'color','rgb')
+    exportfig(gcf,['CI_h_plot' IC_str '_' num2str(j) stat_meth '_manuscript.eps'],'fontsize',2,'color','rgb')
     saveas(gcf,['CI_h_plot' IC_str '_' num2str(j) stat_meth '_manuscript.fig'])
 
     

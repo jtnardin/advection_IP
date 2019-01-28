@@ -3,7 +3,7 @@ clear all; clc
 
 IC_str = '_front';
 
-numel_data =8;
+numel_data = 9;
 
 %load best-fit params, data, and initial condition
 if strcmp(IC_str,'_gauss')

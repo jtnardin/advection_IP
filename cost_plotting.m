@@ -1,7 +1,7 @@
 clear all; clc
 
 
-IC_str = '_gauss';
+IC_str = '_front';
 
 
 %load best-fit params, data, and initial condition
@@ -9,8 +9,12 @@ if strcmp(IC_str,'_gauss')
     load(['advection_rates' IC_str '_IC_all_3_26.mat'])
     load(['advection_art_data' IC_str '_all_3_26.mat'])
 elseif strcmp(IC_str,'_front')
-    load(['advection_rates_autoreg' IC_str '_IC_all.mat'])
-    load(['advection_art_data' IC_str '_all.mat'])
+    load(['advection_art_data' IC_str '_all_rev.mat'])
+    load('advection_rates_autoreg_front_IC_rev.mat')
+%     
+%     load(['advection_art_data' IC_str '_all_missing.mat'])
+%     load('advection_rates_front_IC_missing.mat')
+    
 
 end
     
@@ -23,9 +27,9 @@ if strcmp(IC_str,'_front')
 
     num_meth_cell = cell(5,1);
     num_meth_cell{1} = 'upwind';
-    num_meth_cell{2} = 'Lax-Friedrich';
-    num_meth_cell{3} = 'Lax-Wendroff';
-    num_meth_cell{4} = 'Beam-Warming';
+    %num_meth_cell{2} = 'Lax-Friedrich';
+    num_meth_cell{2} = 'Lax-Wendroff';
+    num_meth_cell{3} = 'Beam-Warming';
     num_meth_cell{4} = 'upwind fl';
 
 elseif strcmp(IC_str,'_gauss')
@@ -102,7 +106,7 @@ for i = 1:numel(data)
 
         markerct = 1;
     
-        for k = [1 3 4 5] 
+        for k = [1 2 3 4] 
             loglog(1./xnsize,squeeze(J_ols(:,i,k)),[markers(markerct) '-'],'linewidth',1,'markersize',markersize(markerct))
 
             if k == 1
@@ -139,7 +143,7 @@ for i = 1:numel(data)
     
     if strcmp(IC_str,'_front')
 %         axis([1e-4 1e-1 1e-4 1e0])
-          axis([1e-4 1e-1 10^-(4) 10^.5])
+          axis([10^-3.5 1e-1 10^-(4) 10^.5])
     elseif strcmp(IC_str,'_gauss')
         axis([10^-3.5 10^-1 10^-8 10^-1])
     end
@@ -212,7 +216,7 @@ for i = 1:numel(data)
         end
     elseif strcmp(IC_str,'_front')
         markerct = 1;
-        for k = [1 3 4 5] 
+        for k = [1 2 3 4] 
             loglog(1./xnsize,squeeze(q_norm(:,i,k)),[markers(markerct) '-'],'linewidth',1,'markersize',markersize(markerct))
 
             if k == 1
@@ -229,8 +233,6 @@ for i = 1:numel(data)
     
     if i == 1
         
-%         h=legend(strcat('$N$ = ',num2str(xnstr'),', $\eta^2 = $',...
-%             num2str(eta_str')),'location','northeast');
 
     if strcmp(IC_str,'_front')
         L=legend('Upwind','Lax-wendroff','Beam-Warming',...
@@ -244,7 +246,7 @@ for i = 1:numel(data)
     end
     
     if strcmp(IC_str,'_front')
-        axis([10^-4 10^-1 10^-3.1 10^1])
+        axis([10^-3.5 10^-1 10^-3.1 10^1])
     elseif strcmp(IC_str,'_gauss')
         axis([10^-3.5 10^-1.15 10^-5.5 10])
     end

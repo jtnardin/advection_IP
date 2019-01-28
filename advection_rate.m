@@ -24,6 +24,10 @@ function [g,sigma,sigma_inv,galpha,gbeta] = advection_rate(input,alpha,beta)
         %sigma, sigma_inv terms
         sigma = @(x,x0) (x-x0)/alpha;
         sigma_inv = @(t,x0) x0 + alpha*t;
+        
+    elseif strcmp(input,'line')
+        
+        g = @(x) alpha + beta*x;
 
     end
     

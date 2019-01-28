@@ -4,12 +4,12 @@ clear all; clc
 %%%%and data set we're compating
 IC_str = '_front';
 num_meth = 1;
-m = 6;
+m = 16;
 
 
 %load best-fit params, data, and initial condition
-load(['advection_rates_autoreg' IC_str '_IC.mat'])
-load(['advection_art_data' IC_str '.mat'])
+load(['advection_rates_autoreg' IC_str '_IC_all.mat'])
+load(['advection_art_data' IC_str '_all.mat'])
 phi = IC_spec(IC_str(2:end));
 
 
@@ -56,7 +56,7 @@ model_sims_auto = cell(length(xnsize),1);
 mod_res = cell(length(xnsize),1);
 res = cell(length(xnsize),1);
 
-for i = 1:length(xnsize)
+for i = 6%1:length(xnsize)
     
     
     %space
@@ -84,7 +84,7 @@ for i = 1:length(xnsize)
     %get model sim
     [J,res{i},model_sims_ols{i}] = MLE_cost_art_data(cell_data,...
         q_ols{i,m,num_meth},dx,xn,x_int,xbd_0,xbd_1,dt,tn,IC,A,Abd,x,xdata,...
-        num_meth_cell{num_meth},t,tdata);
+        num_meth_cell{num_meth},t,tdata,'root');
     
     %fix res structure
     res{i} = reshape(res{i},length(tdata),length(xdata));
@@ -112,17 +112,18 @@ end
 %     
 % end
     
-colors = 'bgrkmc';
+colors = 'rgbckm';
 
 
-for i = 4
+for i = 6
     
-    for l = 1:2
-        figure('unit','normalized','outerposition',[0 0 1 1])
-        for j = 1:length(tdata)
-            subplot(3,2,j)
+    for l = 2
+        figure%('unit','normalized','outerposition',[0 0 1 1])
+        for j = 5%1:length(tdata)
+%             subplot(3,2,j)
 
             yyaxis left
+                    ax1 = gca; 
                     hold on
                     if l == 1
                         plot(xdata,model_sims_ols{i}(j,:),[colors(j) '-'])
@@ -131,8 +132,9 @@ for i = 4
                     end
                     
             ylabel('model')
-
+            set(ax1,'ycolor','k')
             yyaxis right
+                    ax2 = gca
                     hold on
                     if l == 1
                         plot(xdata,res{i}(j,:),[colors(j) '*'])
@@ -144,28 +146,29 @@ for i = 4
 
             xlabel('x')
             ylabel('model - data')
+            set(ax2,'ycolor','k')
             if l == 1
                 title(['OLS Residual, t = ' num2str(tdata(j))])
             elseif l == 2
-                title(['Modified Residual, t = ' num2str(tdata(j))])
+                title('Modified Residual')%, t = ' num2str(tdata(j))])
             end
 
 
-            if j == 1
+%             if j == 1
                 legend('model','residuals')
-            end
+%             end
 
 
         end
     
 
-%         if l == 1
-%             exportfig(gcf,['residual_' IC_str '_' num2str(i) '_noise_' num2str(eta_str(m)) '.eps'],'fontsize',2,'color','rgb')
-%             saveas(gcf,['residual_' IC_str '_' num2str(i) '_noise_' num2str(eta_str(m)) '.fig'])
-%         elseif l == 2
-%             exportfig(gcf,['mod_residual_' IC_str '_' num2str(i) '_noise_' num2str(eta_str(m)) '.eps'],'fontsize',2,'color','rgb')
-%             saveas(gcf,['mod_residual_' IC_str '_' num2str(i) '_noise_' num2str(eta_str(m)) '.fig'])
-%         end
+        if l == 1
+            exportfig(gcf,['residual_' IC_str '_' num2str(i) '_noise_' num2str(eta_str(m)) '.eps'],'fontsize',2,'color','rgb')
+            saveas(gcf,['residual_' IC_str '_' num2str(i) '_noise_' num2str(eta_str(m)) '.fig'])
+        elseif l == 2
+            exportfig(gcf,['mod_residual_' IC_str '_' num2str(i) '_noise_' num2str(eta_str(m)) '.eps'],'fontsize',2,'color','rgb')
+            saveas(gcf,['mod_residual_' IC_str '_' num2str(i) '_noise_' num2str(eta_str(m)) '.fig'])
+        end
         
     end
     

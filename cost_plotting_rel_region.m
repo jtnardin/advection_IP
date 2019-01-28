@@ -63,32 +63,24 @@ rel_range_front{2,3} = 2:7;
 rel_range_front{2,4} = 1:3;
 
 rel_range_front{3,1} = 1:5;
-rel_range_front{3,3} = 1:7;
+rel_range_front{3,3} = 2:4;
 rel_range_front{3,4} = 1:3;
 
-
-rel_range_front{4,1} = 3:7;
-rel_range_front{4,3} = 2:5;
-rel_range_front{4,4} = 1:4;
 
 
 rel_range_front{5,1} = 2:7;
 rel_range_front{5,3} = 1:6;
-rel_range_front{5,4} = [1 2 4:7];
+rel_range_front{5,4} = [1:5 7];
 
 
 rel_range_front{6,1} = 2:7;
-rel_range_front{6,3} = 3:7;
+rel_range_front{6,3} = 1:7;
 rel_range_front{6,4} = 1:5;
 
 rel_range_front{7,1} = 2:6;
 rel_range_front{7,3} = 1:4;
 rel_range_front{7,4} = 2:5;
 
-
-rel_range_front{8,1} = 2:7;
-rel_range_front{8,3} = 1:5;
-rel_range_front{8,4} = 2:4;
 
 save('rel_range_cost_sims.mat');
 

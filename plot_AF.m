@@ -4,7 +4,7 @@ markers = '.^sxv*d';
 markersize = [20 7*ones(1,6)];
 
 
-for k = 1:2
+for k = 2
 
     if k == 1
         num_array = 1:4;
@@ -23,22 +23,39 @@ for k = 1:2
         num_meth_short_cell{4} = 'Upwind w/ flux limiters';
 
     elseif k == 2
-        num_array = [1 3 4 5];
-        
+%         num_array = [1 3 4 5];
+%         
+%         num_meth_cell = cell(5,1);
+%         num_meth_cell{1} = 'upwind';
+%         num_meth_cell{2} = 'laxfried';
+%         num_meth_cell{3} = 'laxwend';
+%         num_meth_cell{4} = 'beamwarm';
+%         num_meth_cell{5} = 'upwindfl';
+% 
+% 
+%         num_meth_short_cell = cell(5,1);
+%         num_meth_short_cell{1} = 'Upwind';
+%         num_meth_short_cell{2} = 'Lax-Friedrichs';
+%         num_meth_short_cell{3} = 'Lax-Wendroff';
+%         num_meth_short_cell{4} = 'Beam-Warming';
+%         num_meth_short_cell{5} = 'Upwind w/ flux limiters';
+
+        num_array = 1:4;
+         
         num_meth_cell = cell(5,1);
         num_meth_cell{1} = 'upwind';
-        num_meth_cell{2} = 'laxfried';
-        num_meth_cell{3} = 'laxwend';
-        num_meth_cell{4} = 'beamwarm';
-        num_meth_cell{5} = 'upwindfl';
+        num_meth_cell{2} = 'laxwend';
+        num_meth_cell{3} = 'beamwarm';
+        num_meth_cell{4} = 'upwindfl';
 
 
         num_meth_short_cell = cell(5,1);
         num_meth_short_cell{1} = 'Upwind';
-        num_meth_short_cell{2} = 'Lax-Friedrichs';
-        num_meth_short_cell{3} = 'Lax-Wendroff';
-        num_meth_short_cell{4} = 'Beam-Warming';
-        num_meth_short_cell{5} = 'Upwind w/ flux limiters';
+        num_meth_short_cell{2} = 'Lax-Wendroff';
+        num_meth_short_cell{3} = 'Beam-Warming';
+        num_meth_short_cell{4} = 'Upwind w/ flux limiters';
+
+    
     end
 
     
@@ -60,8 +77,8 @@ for k = 1:2
             load(['advection_rates' IC_str '_IC_all_3_26.mat'])
             load(['advection_art_data' IC_str '_all_3_26.mat'])
         elseif strcmp(IC_str,'_front')
-            load(['advection_rates_autoreg' IC_str '_IC_all.mat'])
-            load(['advection_art_data' IC_str '_all.mat'])
+            load(['advection_rates_autoreg' IC_str '_IC_rev.mat'])
+            load(['advection_art_data' IC_str '_all_rev.mat'])
 
         end
 

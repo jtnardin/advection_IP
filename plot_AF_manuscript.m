@@ -2,7 +2,7 @@ clear all; clc
 
 for k = 2
 
-    for num_meth = 3 %[1 3 ]
+    for num_meth = [1 3] %[1 3 ]
 
         
         if k == 1
@@ -196,11 +196,12 @@ for k = 2
                     set(h,'units','normalized','position',[.93,.45,.03,.1])
             end
 
+            uistack(p1,'top')
             
               title(['$N$ = ',num2str(xndata(xdi)) ', $\eta^2 =$ ' ...
                 num2str(eta_vec(sigmaj)^2)],'interpreter','latex')
 
-            xlabel('$\log(h)$','interpreter','latex')
+            xlabel('$h$','interpreter','latex')
             
             if strcmp(IC_str,'_gauss')
                 if num_meth == 1
